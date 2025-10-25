@@ -191,10 +191,31 @@ def save_uploaded_image(hero_name: str, uploaded_file) -> str:
     return path
 
 def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
-    h = data.get(name)
-    if not isinstance(h, dict): return ""
+    h = data.get(name) or {}
+    # 1) 先嘗試用 JSON 內的欄位
     p = h.get("image", "")
-    return p if (p and os.path.exists(p)) else ""
+    if p:
+        # 如果只存檔名或相對路徑，也容忍
+        candidate = p
+        if not os.path.isabs(candidate) and not candidate.startswith(IMAGES_DIR):
+            candidate = os.path.join(IMAGES_DIR, os.path.basename(candidate))
+        if os.path.exists(candidate):
+            return candidate
+
+    # 2) 嘗試以 safe_slug(英雄名) 組候選檔名
+    base = safe_slug(name)
+    for ext in ALLOWED_IMAGE_TYPES:
+        candidate = os.path.join(IMAGES_DIR, f"{base}.{ext}")
+        if os.path.exists(candidate):
+            return candidate
+
+    # 3) 再嘗試用「原始英雄名」作為檔名
+    for ext in ALLOWED_IMAGE_TYPES:
+        candidate = os.path.join(IMAGES_DIR, f"{name}.{ext}")
+        if os.path.exists(candidate):
+            return candidate
+
+    return ""
 
 # ---------- 縮圖網格（純展示；全域外觀設定） ----------
 def render_image_grid(names: List[str], data: Dict[str, Dict], size:int, cols:int, show_names:bool):
