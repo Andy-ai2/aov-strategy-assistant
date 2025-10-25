@@ -256,8 +256,10 @@ def quick_edit_panel(name: str):
     cols = st.columns(2)
     with cols[0]:
        p_main = get_hero_image_path(st.session_state.data, name)
+    p_main = get_hero_image_path(data, picked)
     if p_main:
-        st.image(p_main, caption=name, use_container_width=True)
+        st.image(p_main, caption=picked, use_container_width=False)
+
 
     with cols[1]:
         tier = st.selectbox("T 度（可留白）", TIER_CHOICES,
