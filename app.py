@@ -255,8 +255,10 @@ def quick_edit_panel(name: str):
     st.markdown("### ✏️ 快速編輯：" + name)
     cols = st.columns(2)
     with cols[0]:
-        if h.get("image") and os.path.exists(h["image"]):
-            st.image(h["image"], caption=name, use_container_width=True)
+       p_main = get_hero_image_path(st.session_state.data, name)
+    if p_main:
+        st.image(p_main, caption=name, use_container_width=True)
+
     with cols[1]:
         tier = st.selectbox("T 度（可留白）", TIER_CHOICES,
                             index=TIER_CHOICES.index(h.get("tier", "")),
@@ -411,8 +413,9 @@ with tab1:
         if picked != "（請選擇）" and picked in data:
             h = ensure_fields(data[picked])
             st.subheader(f"📄 {picked}")
-            if h.get("image") and os.path.exists(h["image"]):
-                st.image(h["image"], caption=picked, use_container_width=False)
+            p_main = get_hero_image_path(data, picked)
+        if p_main:
+            st.image(p_main, caption=picked, use_container_width=False)
 
             main = h.get("main_lane","")
             t_main = (h["lane_tiers"].get(main, "") if main else "") or "—"
