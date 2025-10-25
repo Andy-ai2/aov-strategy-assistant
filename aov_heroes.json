@@ -1,0 +1,3485 @@
+{
+  "蘇離": {
+    "tier": "T0",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "比洛爾",
+      "菲尼克",
+      "盧蜜亞"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\蘇離.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T0",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "比洛爾": {
+    "tier": "T0",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "蘇離"
+    ],
+    "countered_by": [
+      "安奈特",
+      "阿茲卡",
+      "蘭鐸",
+      "邦尼",
+      "刀鋒寶貝",
+      "綺蘿",
+      "薩尼"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\比洛爾.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T0",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "__ban_list__": [
+    "亥犽",
+    "哥德爾",
+    "安奈特",
+    "弗洛倫",
+    "比洛爾",
+    "牛魔王",
+    "蘇離",
+    "馬洛斯"
+  ],
+  "阿萊斯特": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "芽芽",
+      "颯枷",
+      "蘿兒"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\阿萊斯特.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "亞連": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "夜叉",
+      "莫托斯",
+      "司空震"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\亞連.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "安奈特": {
+    "tier": "T0",
+    "roles": [
+      "法師",
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "比洛爾",
+      "安格列",
+      "若伊"
+    ],
+    "countered_by": [
+      "哥德爾"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\安奈特.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T0",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "星葵": {
+    "tier": "T2",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "瑟斐斯"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\星葵.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "阿杜恩": {
+    "tier": "T2",
+    "roles": [
+      "坦克",
+      "戰士"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "銀晝",
+      "筱清",
+      "提米"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\阿杜恩.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "莫托斯": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "亞連"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\莫托斯.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "艾瑞": {
+    "tier": "T2",
+    "roles": [
+      "輔助",
+      "坦克"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "芽芽",
+      "古木"
+    ],
+    "countered_by": [
+      "克萊斯"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\艾瑞.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "艾翠絲": {
+    "tier": "T3",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "凱撒路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\艾翠絲.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "阿塔": {
+    "tier": "T1",
+    "roles": [
+      "坦克"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "葉娜",
+      "筱清",
+      "皮皮"
+    ],
+    "countered_by": [
+      "馬洛斯",
+      "霧己"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\阿塔.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "芽芽": {
+    "tier": "T1",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "阿萊斯特",
+      "艾瑞",
+      "穆加爵"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\芽芽.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "阿茲卡": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "比洛爾",
+      "馬洛斯"
+    ],
+    "countered_by": [
+      "哥德爾",
+      "蘿兒",
+      "洛里昂"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\阿茲卡.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "伯頓": {
+    "tier": "T3",
+    "roles": [
+      "坦克",
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "古木",
+      "提米",
+      "諾可西"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\伯頓.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "貝揚": {
+    "tier": "T3",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\貝揚.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": "特殊"
+    }
+  },
+  "愛里": {
+    "tier": "T1",
+    "roles": [
+      "刺客",
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "弗洛倫",
+      "狂鐵",
+      "筱清"
+    ],
+    "countered_by": [
+      "美娜"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\愛里.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "狂鐵": {
+    "tier": "T1",
+    "roles": [
+      "戰士",
+      "坦克"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "司空震",
+      "夏洛特",
+      "葉娜"
+    ],
+    "countered_by": [
+      "愛里",
+      "凱格路士",
+      "馬洛斯",
+      "思科德",
+      "霧己",
+      "趙雲"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\狂鐵.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "邦尼": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "比洛爾",
+      "金納",
+      "諾可西"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\邦尼.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "布萊特": {
+    "tier": "T2",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\布萊特.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "刀鋒寶貝": {
+    "tier": "T2",
+    "roles": [
+      "刺客",
+      "戰士"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "比洛爾",
+      "蘭鐸",
+      "司空震"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\刀鋒寶貝.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "卡芬妮": {
+    "tier": "T1",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "亥犽",
+      "蘭鐸"
+    ],
+    "countered_by": [
+      "歐米茄"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\卡芬妮.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "T1",
+      "游走": ""
+    }
+  },
+  "希露卡": {
+    "tier": "T3",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\希露卡.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "夏洛特": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "夜叉",
+      "龍馬",
+      "司空震"
+    ],
+    "countered_by": [
+      "狂鐵",
+      "弗洛倫",
+      "莫拉"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\夏洛特.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "查戈納爾": {
+    "tier": "T3",
+    "roles": [
+      "坦克",
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "夸克",
+      "克萊斯",
+      "朗博",
+      "薩尼"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\查戈納爾.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "克萊斯": {
+    "tier": "T2",
+    "roles": [
+      "輔助",
+      "坦克"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "提米",
+      "艾瑞"
+    ],
+    "countered_by": [
+      "查戈納爾"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\克萊斯.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "達爾西": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "圖倫"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\達爾西.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "夜姬": {
+    "tier": "T3",
+    "roles": [
+      "戰士",
+      "坦克"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\夜姬.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": "特殊"
+    }
+  },
+  "貂蟬": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\貂蟬.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "狄拉克": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\狄拉克.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "朵莉亞": {
+    "tier": "T1",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\朵莉亞.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "布萊恩": {
+    "tier": "特殊",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\布萊恩.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "蘭鐸": {
+    "tier": "T1",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "比洛爾",
+      "弗洛倫",
+      "瑪迦",
+      "綺蘿",
+      "霧己"
+    ],
+    "countered_by": [
+      "刀鋒寶貝",
+      "卡芬妮",
+      "瀾",
+      "龍馬",
+      "森圖爾特",
+      "特爾安娜絲",
+      "瑟斐斯"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\蘭鐸.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T1",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "蘇": {
+    "tier": "T1",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "中路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "索文",
+      "勇"
+    ],
+    "countered_by": [
+      "森圖爾特",
+      "史蘭茲",
+      "海倫",
+      "伊格",
+      "盧蜜亞",
+      "麥克思",
+      "塔拉"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\蘇.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "特殊",
+      "打野": "",
+      "魔龍路": "T1",
+      "游走": ""
+    }
+  },
+  "銀晝": {
+    "tier": "T1",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "游走",
+      "打野"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "夸克",
+      "海倫",
+      "明世隱"
+    ],
+    "countered_by": [
+      "阿杜恩",
+      "維羅",
+      "牛魔王",
+      "夸克",
+      "洛克"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\銀晝.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "艾琳": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "中路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "亥犽",
+      "森圖爾特",
+      "海諾"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\艾琳.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "埃羅": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "緋淚",
+      "瑞克",
+      "超人"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\埃羅.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "菲尼克": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "蘇離",
+      "凡恩",
+      "卡瑞茲"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\菲尼克.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T1",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "弗洛倫": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "夜叉",
+      "夏洛特",
+      "筱清",
+      "思科德"
+    ],
+    "countered_by": [
+      "愛里",
+      "蘭鐸",
+      "亥犽",
+      "瑪迦",
+      "莫拉"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\弗洛倫.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "哥德爾": {
+    "tier": "T0",
+    "roles": [
+      "法師",
+      "戰士"
+    ],
+    "lanes": [
+      "中路",
+      "游走",
+      "凱撒路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "阿茲卡",
+      "安奈特"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\哥德爾.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "T0",
+      "打野": "",
+      "魔龍路": "特殊",
+      "游走": "T2"
+    }
+  },
+  "歌芙拉": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "凱格路士",
+      "海諾",
+      "金納"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\歌芙拉.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "夸克": {
+    "tier": "T2",
+    "roles": [
+      "輔助",
+      "坦克"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "銀晝",
+      "海倫",
+      "明世隱"
+    ],
+    "countered_by": [
+      "查戈納爾",
+      "銀晝",
+      "娜塔亞",
+      "超人",
+      "牛魔王",
+      "維羅"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\夸克.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "亥犽": {
+    "tier": "T0",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野",
+      "凱撒路",
+      "中路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "馬洛斯",
+      "弗洛倫",
+      "塔拉"
+    ],
+    "countered_by": [
+      "卡芬妮",
+      "艾琳",
+      "靈靈",
+      "索文"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\亥犽.png",
+    "lane_tiers": {
+      "凱撒路": "特殊",
+      "中路": "特殊",
+      "打野": "特殊",
+      "魔龍路": "T0",
+      "游走": ""
+    }
+  },
+  "海諾": {
+    "tier": "T1",
+    "roles": [
+      "法師",
+      "戰士"
+    ],
+    "lanes": [
+      "中路",
+      "凱撒路",
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "歌芙拉"
+    ],
+    "countered_by": [
+      "艾琳",
+      "令月"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\海諾.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "T1",
+      "打野": "T3",
+      "魔龍路": "特殊",
+      "游走": ""
+    }
+  },
+  "海倫": {
+    "tier": "T3",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "蘇",
+      "伊格",
+      "令月"
+    ],
+    "countered_by": [
+      "銀晝",
+      "夸克",
+      "穆加爵",
+      "麥克思",
+      "古木",
+      "皮皮"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\海倫.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "伊格": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "蘇",
+      "森圖爾特"
+    ],
+    "countered_by": [
+      "海倫",
+      "洛里昂",
+      "拉茲",
+      "塔拉"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\伊格.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "伊耿士": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\伊耿士.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "盧蜜亞": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "蘇",
+      "蘇離",
+      "卡瑞茲"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\盧蜜亞.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "依夏": {
+    "tier": "T3",
+    "roles": [
+      "法師",
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\依夏.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T3",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "金納": {
+    "tier": "T3",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "歌芙拉"
+    ],
+    "countered_by": [
+      "邦尼"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\金納.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T3",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "卡莉": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\卡莉.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "凱恩": {
+    "tier": "T3",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "奎倫",
+      "悟空"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\凱恩.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "綺蘿": {
+    "tier": "T1",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "比洛爾"
+    ],
+    "countered_by": [
+      "蘭鐸",
+      "祖卡",
+      "瑟斐斯",
+      "納克羅斯"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\綺蘿.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T1",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "凱格路士": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "歌芙拉",
+      "夜叉",
+      "狂鐵"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\凱格路士.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "科里納卡": {
+    "tier": "T2",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "納克羅斯"
+    ],
+    "countered_by": [
+      "祖卡"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\科里納卡.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "克里希": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\克里希.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "卡瑞茲": {
+    "tier": "T1",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "菲尼克",
+      "盧蜜亞"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\卡瑞茲.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "拉維爾": {
+    "tier": "T3",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "娜塔亞",
+      "歐米茄"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\拉維爾.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "莉莉安": {
+    "tier": "T2",
+    "roles": [
+      "法師",
+      "刺客"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\莉莉安.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "琳蒂": {
+    "tier": "T3",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\琳蒂.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "洛里昂": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "阿茲卡",
+      "拉茲",
+      "伊格"
+    ],
+    "countered_by": [
+      "蘿兒"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\洛里昂.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "T1",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "呂布": {
+    "tier": "T3",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "葉娜"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\呂布.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "朗博": {
+    "tier": "T3",
+    "roles": [
+      "輔助",
+      "坦克"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "提米",
+      "歐米茄"
+    ],
+    "countered_by": [
+      "查戈納爾"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\朗博.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "馬洛斯": {
+    "tier": "T0",
+    "roles": [
+      "坦克",
+      "戰士"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路",
+      "中路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "牛魔王",
+      "狂鐵",
+      "阿塔"
+    ],
+    "countered_by": [
+      "阿茲卡",
+      "亥犽",
+      "蘿兒",
+      "諾可西",
+      "緋淚"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\馬洛斯.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "特殊",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T0"
+    }
+  },
+  "瑪迦": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "弗洛倫",
+      "司空震"
+    ],
+    "countered_by": [
+      "艾蜜莉",
+      "蘭鐸",
+      "筱清",
+      "莫拉",
+      "瀾",
+      "特爾安娜絲"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\瑪迦.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "特殊",
+      "游走": ""
+    }
+  },
+  "麥克思": {
+    "tier": "T2",
+    "roles": [
+      "坦克"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "海倫",
+      "蘇"
+    ],
+    "countered_by": [
+      "贊尼爾"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\麥克思.png",
+    "lane_tiers": {
+      "凱撒路": "特殊",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "特殊"
+    }
+  },
+  "穆加爵": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "海倫",
+      "芽芽",
+      "拉茲"
+    ],
+    "countered_by": [
+      "緋淚"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\穆加爵.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "特殊",
+      "魔龍路": "特殊",
+      "游走": ""
+    }
+  },
+  "__compositions__": {
+    "消耗陣": {
+      "members": [],
+      "core": "",
+      "counters": []
+    }
+  },
+  "美娜": {
+    "tier": "T2",
+    "roles": [
+      "坦克",
+      "輔助"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "夜叉",
+      "筱清",
+      "愛里"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\美娜.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "明世隱": {
+    "tier": "T1",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "銀晝",
+      "夸克",
+      "古木",
+      "皮皮"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\明世隱.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "摩恩": {
+    "tier": "T3",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\摩恩.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "莫拉": {
+    "tier": "T2",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "弗洛倫",
+      "夏洛特",
+      "瑪迦"
+    ],
+    "countered_by": [
+      "夜叉",
+      "筱清",
+      "諾可西"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\莫拉.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "納克羅斯": {
+    "tier": "T2",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "綺蘿"
+    ],
+    "countered_by": [
+      "科里納卡",
+      "祖卡"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\納克羅斯.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "娜塔亞": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "夸克",
+      "拉維爾",
+      "古木"
+    ],
+    "countered_by": [
+      "普雷塔"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\娜塔亞.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "歐米茄": {
+    "tier": "T2",
+    "roles": [
+      "坦克",
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "若伊",
+      "卡芬妮",
+      "拉維爾"
+    ],
+    "countered_by": [
+      "朗博"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\歐米茄.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "夜叉": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "魔龍路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "莫拉",
+      "瑞克",
+      "緋淚"
+    ],
+    "countered_by": [
+      "亞連",
+      "艾蜜莉",
+      "夏洛特",
+      "弗洛倫",
+      "凱格路士",
+      "美娜",
+      "皮皮"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\夜叉.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "特殊",
+      "游走": "T3"
+    }
+  },
+  "渥馬爾": {
+    "tier": "T3",
+    "roles": [
+      "坦克"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\渥馬爾.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "潘因": {
+    "tier": "T2",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野",
+      "中路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\潘因.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T3",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "普雷塔": {
+    "tier": "T3",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "娜塔亞"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\普雷塔.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T3",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "筱清": {
+    "tier": "T1",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "瑪迦",
+      "莫拉",
+      "葉娜"
+    ],
+    "countered_by": [
+      "愛里",
+      "阿杜恩",
+      "阿塔",
+      "弗洛倫",
+      "美娜",
+      "思科德",
+      "緋淚",
+      "趙雲"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\筱清.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "奎倫": {
+    "tier": "T3",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "凱恩"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\奎倫.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "拉茲": {
+    "tier": "T1",
+    "roles": [
+      "刺客",
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "伊格"
+    ],
+    "countered_by": [
+      "洛里昂",
+      "穆加爵"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\拉茲.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "瑞克": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "龍馬",
+      "葉娜",
+      "超人"
+    ],
+    "countered_by": [
+      "埃羅",
+      "夜叉",
+      "葉娜"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\瑞克.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "若伊": {
+    "tier": "T1",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "安奈特",
+      "歐米茄"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\若伊.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "洛克": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "銀晝"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\洛克.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "諾可西": {
+    "tier": "T1",
+    "roles": [
+      "坦克",
+      "戰士"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路",
+      "中路",
+      "打野",
+      "魔龍路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "莫拉",
+      "馬洛斯",
+      "牛魔王"
+    ],
+    "countered_by": [
+      "伯頓",
+      "邦尼",
+      "霧己"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\諾可西.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "T3",
+      "打野": "T3",
+      "魔龍路": "特殊",
+      "游走": "T1"
+    }
+  },
+  "龍馬": {
+    "tier": "T2",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野",
+      "中路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "蘭鐸"
+    ],
+    "countered_by": [
+      "夏洛特",
+      "瑞克",
+      "葉娜"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\龍馬.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "特殊",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "瀾": {
+    "tier": "T2",
+    "roles": [
+      "法師",
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "打野",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "蘭鐸",
+      "瑪迦",
+      "司空震"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\瀾.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "思科德": {
+    "tier": "T2",
+    "roles": [
+      "戰士",
+      "坦克"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "葉娜",
+      "狂鐵",
+      "筱清"
+    ],
+    "countered_by": [
+      "弗洛倫",
+      "趙雲"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\思科德.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "史蘭茲": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "蘇"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\史蘭茲.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "森圖爾特": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "蘇",
+      "凡恩",
+      "蘭鐸"
+    ],
+    "countered_by": [
+      "艾琳",
+      "伊格",
+      "司空震"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\森圖爾特.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "超人": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "夸克"
+    ],
+    "countered_by": [
+      "埃羅",
+      "瑞克"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\超人.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "塔拉": {
+    "tier": "T2",
+    "roles": [
+      "坦克",
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "游走",
+      "打野",
+      "中路",
+      "魔龍路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "伊格",
+      "蘇",
+      "令月"
+    ],
+    "countered_by": [
+      "亥犽"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\塔拉.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "特殊",
+      "打野": "特殊",
+      "魔龍路": "特殊",
+      "游走": "T2"
+    }
+  },
+  "霧己": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路",
+      "游走",
+      "中路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "諾可西",
+      "狂鐵",
+      "阿塔"
+    ],
+    "countered_by": [
+      "蘭鐸"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\霧己.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "特殊",
+      "打野": "T1",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "提米": {
+    "tier": "T2",
+    "roles": [
+      "輔助",
+      "坦克"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "阿杜恩",
+      "伯頓",
+      "克萊斯",
+      "朗博",
+      "牛魔王",
+      "維羅",
+      "古木"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\提米.png",
+    "lane_tiers": {
+      "凱撒路": "特殊",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "特爾安娜絲": {
+    "tier": "T3",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "凡恩",
+      "蘭鐸",
+      "瑪迦"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\特爾安娜絲.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "緹莉": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\緹莉.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "薩尼": {
+    "tier": "T2",
+    "roles": [
+      "坦克"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "比洛爾"
+    ],
+    "countered_by": [
+      "查戈納爾"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\薩尼.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "閃電俠": {
+    "tier": "T3",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\閃電俠.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T3",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "索文": {
+    "tier": "T1",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "亥犽"
+    ],
+    "countered_by": [
+      "蘇"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\索文.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "T1",
+      "游走": ""
+    }
+  },
+  "牛魔王": {
+    "tier": "T0",
+    "roles": [
+      "坦克",
+      "輔助"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "銀晝",
+      "提米",
+      "夸克"
+    ],
+    "countered_by": [
+      "馬洛斯",
+      "諾可西"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\牛魔王.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": "T0"
+    }
+  },
+  "圖倫": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野",
+      "凱撒路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "達爾西"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\圖倫.png",
+    "lane_tiers": {
+      "凱撒路": "特殊",
+      "中路": "T2",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "凡恩": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "菲尼克",
+      "森圖爾特",
+      "特爾安娜絲"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\凡恩.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "薇菈": {
+    "tier": "T3",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\薇菈.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T3",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "緋淚": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路",
+      "中路",
+      "打野",
+      "游走"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "穆加爵",
+      "馬洛斯",
+      "筱清"
+    ],
+    "countered_by": [
+      "埃羅",
+      "夜叉"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\緋淚.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "特殊",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "堇": {
+    "tier": "T2",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\堇.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "T2",
+      "游走": ""
+    }
+  },
+  "安格列": {
+    "tier": "T1",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "安奈特"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\安格列.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "維羅": {
+    "tier": "T2",
+    "roles": [
+      "坦克",
+      "戰士"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "銀晝",
+      "提米",
+      "夸克"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\維羅.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "靈靈": {
+    "tier": "T1",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路",
+      "打野"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [
+      "亥犽"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\靈靈.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "T1",
+      "游走": ""
+    }
+  },
+  "神力女超人": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路",
+      "游走",
+      "中路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\神力女超人.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "特殊",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "悟空": {
+    "tier": "T3",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "凱恩"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\悟空.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "贊尼爾": {
+    "tier": "T2",
+    "roles": [
+      "坦克",
+      "輔助"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "麥克思"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\贊尼爾.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "青硯": {
+    "tier": "T2",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\青硯.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T2",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "古木": {
+    "tier": "T1",
+    "roles": [
+      "坦克"
+    ],
+    "lanes": [
+      "游走",
+      "凱撒路"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "明世隱",
+      "提米",
+      "海倫"
+    ],
+    "countered_by": [
+      "艾瑞",
+      "伯頓",
+      "娜塔亞"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\古木.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T1"
+    }
+  },
+  "葉娜": {
+    "tier": "T1",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "龍馬",
+      "瑞克"
+    ],
+    "countered_by": [
+      "阿塔",
+      "狂鐵",
+      "呂布",
+      "筱清",
+      "瑞克",
+      "思科德"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\葉娜.png",
+    "lane_tiers": {
+      "凱撒路": "T1",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "勇": {
+    "tier": "T3",
+    "roles": [
+      "射手"
+    ],
+    "lanes": [
+      "魔龍路"
+    ],
+    "main_lane": "魔龍路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "蘇"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\勇.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "T3",
+      "游走": ""
+    }
+  },
+  "令月": {
+    "tier": "T2",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "海諾"
+    ],
+    "countered_by": [
+      "海倫",
+      "塔拉"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\令月.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "趙雲": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路",
+      "游走"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "筱清",
+      "狂鐵",
+      "思科德"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\趙雲.png",
+    "lane_tiers": {
+      "凱撒路": "特殊",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "颯枷": {
+    "tier": "T2",
+    "roles": [
+      "刺客",
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [
+      "阿萊斯特"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\颯枷.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "瑟斐斯": {
+    "tier": "T1",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "綺蘿",
+      "星葵",
+      "蘭鐸"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\瑟斐斯.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T1",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "齊爾": {
+    "tier": "T3",
+    "roles": [
+      "刺客"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\齊爾.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "皮皮": {
+    "tier": "T2",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "main_lane": "游走",
+    "synergy": [],
+    "counters": [
+      "夜叉",
+      "明世隱",
+      "海倫"
+    ],
+    "countered_by": [
+      "阿塔"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\皮皮.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T2"
+    }
+  },
+  "祖卡": {
+    "tier": "T3",
+    "roles": [
+      "戰士",
+      "刺客"
+    ],
+    "lanes": [
+      "打野",
+      "凱撒路"
+    ],
+    "main_lane": "打野",
+    "synergy": [],
+    "counters": [
+      "綺蘿",
+      "科里納卡",
+      "納克羅斯"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\祖卡.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "司空震": {
+    "tier": "T3",
+    "roles": [
+      "戰士",
+      "法師"
+    ],
+    "lanes": [
+      "凱撒路",
+      "打野"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "森圖爾特"
+    ],
+    "countered_by": [
+      "亞連",
+      "艾蜜莉",
+      "狂鐵",
+      "刀鋒寶貝",
+      "夏洛特",
+      "瑪迦",
+      "瀾"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\司空震.png",
+    "lane_tiers": {
+      "凱撒路": "T3",
+      "中路": "",
+      "打野": "T3",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "愛麗絲": {
+    "tier": "T2",
+    "roles": [
+      "輔助"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\愛麗絲.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T2",
+      "打野": "",
+      "魔龍路": "",
+      "游走": "T3"
+    }
+  },
+  "艾蜜莉": {
+    "tier": "T2",
+    "roles": [
+      "戰士"
+    ],
+    "lanes": [
+      "凱撒路"
+    ],
+    "main_lane": "凱撒路",
+    "synergy": [],
+    "counters": [
+      "夜叉",
+      "司空震",
+      "瑪迦"
+    ],
+    "countered_by": [],
+    "ban_targets": [],
+    "image": "hero_images\\艾蜜莉.png",
+    "lane_tiers": {
+      "凱撒路": "T2",
+      "中路": "",
+      "打野": "",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "蘿兒": {
+    "tier": "T1",
+    "roles": [
+      "法師"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "main_lane": "中路",
+    "synergy": [],
+    "counters": [
+      "阿茲卡",
+      "洛里昂",
+      "馬洛斯"
+    ],
+    "countered_by": [
+      "阿萊斯特"
+    ],
+    "ban_targets": [],
+    "image": "hero_images\\蘿兒.png",
+    "lane_tiers": {
+      "凱撒路": "",
+      "中路": "T1",
+      "打野": "特殊",
+      "魔龍路": "",
+      "游走": ""
+    }
+  },
+  "__lane_bans__": {
+    "凱撒路": [
+      "弗洛倫"
+    ],
+    "中路": [
+      "哥德爾",
+      "安奈特"
+    ],
+    "打野": [
+      "比洛爾",
+      "蘇離"
+    ],
+    "魔龍路": [
+      "亥犽"
+    ],
+    "游走": [
+      "牛魔王",
+      "馬洛斯"
+    ]
+  }
+}
