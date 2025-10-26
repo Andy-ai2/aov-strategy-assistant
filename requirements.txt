@@ -1,3 +1,5 @@
 streamlit>=1.31
 streamlit-sortables>=0.2.0
+gspread
+google-auth
 
