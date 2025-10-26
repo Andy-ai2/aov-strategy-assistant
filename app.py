@@ -1,16 +1,20 @@
 # app.py
-# AOV戰略助手（整合 Google Sheets 永久保存）
-# 功能：查詢/新增/更新/刪除/雙向修補/Ban Pick（總Ban/各分路Ban｜僅輸入名字）/英雄庫/Tier 排行/體系陣容（含核心與被克制｜僅輸入名字）
-# 額外：側邊欄 Google Sheets 連線測試；保存時自動同步到 Sheet；可一鍵從 Sheet 載回
+# AOV戰略助手（含 Google Sheets 讀寫＋詳盡偵錯）
+# - 本地存檔：aov_heroes.json
+# - Google Sheets：測試連線 / 從雲端載入 / 存到雲端（A1 儲存格會放整包 JSON）
+# - 你的原本功能：查詢/新增/更新/刪除/雙向修補/Ban Pick/英雄庫/Tier/體系陣容
 
-import json, os, re
+import json, os, re, traceback
 from typing import Dict, List, Tuple, Union
-from datetime import datetime
 import streamlit as st
 
-# ====== Google Sheets 依賴 ======
-import gspread
-from google.oauth2.service_account import Credentials
+# === gspread / google auth ===
+try:
+    import gspread
+    from google.oauth2.service_account import Credentials
+    GSPREAD_AVAILABLE = True
+except Exception:
+    GSPREAD_AVAILABLE = False
 
 # ---------- 常數與檔案 ----------
 DATA_FILE = "aov_heroes.json"
@@ -27,50 +31,6 @@ ALLOWED_IMAGE_TYPES = ["png","jpg","jpeg","webp"]
 def tier_rank(t:str)->int:
     return TIER_WEIGHT.get(t, len(TIER_ORDER))
 
-# ---------- Google Sheets Utils ----------
-def get_gsheet_client():
-    """回傳目前工作表物件（依 st.secrets 的 GSHEET_ID/GSHEET_TAB），失敗回傳 None"""
-    try:
-        creds = Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"],
-            scopes=["https://www.googleapis.com/auth/spreadsheets"]
-        )
-        gc = gspread.authorize(creds)
-        sh = gc.open_by_key(st.secrets["GSHEET_ID"])
-        ws = sh.worksheet(st.secrets["GSHEET_TAB"])
-        return ws
-    except Exception as e:
-        st.error(f"Google Sheets 初始化失敗：{e}")
-        return None
-
-def push_json_to_sheet(data: Dict[str, Dict]) -> Tuple[bool, str]:
-    """把 JSON 字串寫進 A1，時間寫 B1"""
-    try:
-        ws = get_gsheet_client()
-        if not ws:
-            return False, "工作表初始化失敗"
-        ws.update_acell("A1", json.dumps(data, ensure_ascii=False, indent=2))
-        ws.update_acell("B1", f"last saved @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        return True, "同步成功"
-    except Exception as e:
-        return False, f"同步失敗：{e}"
-
-def pull_json_from_sheet() -> Tuple[bool, Union[Dict[str, Dict], str]]:
-    """從 A1 讀 JSON 回來"""
-    try:
-        ws = get_gsheet_client()
-        if not ws:
-            return False, "工作表初始化失敗"
-        text = ws.acell("A1").value or ""
-        if not text.strip():
-            return False, "A1 目前是空白，沒有可載入的資料"
-        obj = json.loads(text)
-        if not isinstance(obj, dict):
-            return False, "A1 內容不是有效的 JSON 物件"
-        return True, obj
-    except Exception as e:
-        return False, f"載入失敗：{e}"
-
 # ---------- I/O ----------
 def load_data()->Dict[str,Dict]:
     if not os.path.exists(DATA_FILE):
@@ -85,6 +45,67 @@ def load_data()->Dict[str,Dict]:
 def save_data(data:Dict[str,Dict])->None:
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+# ---------- Google Sheets 連線 ----------
+def _gsheet_init():
+    """回傳 (gc, sh, ws)。任何一步失敗會 raise，外面捕捉並顯示訊息。"""
+    if not GSPREAD_AVAILABLE:
+        raise RuntimeError("環境沒有 gspread / google-auth，請確認 requirements.txt。")
+
+    # 讀 secrets
+    try:
+        info = st.secrets["gcp_service_account"]
+    except KeyError:
+        raise KeyError("st.secrets 沒有 [gcp_service_account]。")
+
+    gsid = st.secrets.get("GSHEET_ID", "").strip()
+    gstab = st.secrets.get("GSHEET_TAB", "").strip()
+    if not gsid:
+        raise KeyError("st.secrets 沒有 GSHEET_ID。")
+    if not gstab:
+        raise KeyError("st.secrets 沒有 GSHEET_TAB。")
+
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive",
+    ]
+    creds = Credentials.from_service_account_info(info, scopes=scopes)
+    gc = gspread.authorize(creds)
+    sh = gc.open_by_key(gsid)
+
+    # 取得或建立工作表
+    try:
+        ws = sh.worksheet(gstab)
+    except gspread.WorksheetNotFound:
+        ws = sh.add_worksheet(title=gstab, rows=100, cols=26)
+        ws.update("A1", "{}")  # 建一個空 JSON
+
+    return gc, sh, ws
+
+def test_gsheet_connection()->Tuple[bool, str]:
+    try:
+        _gsheet_init()
+        return True, "✅ 連線成功"
+    except Exception as e:
+        return False, f"❌ 連線失敗：{e}\n{traceback.format_exc()}"
+
+def load_from_gsheet()->Dict[str, Dict]:
+    """從 A1 讀回 JSON；失敗 raise。"""
+    _, _, ws = _gsheet_init()
+    txt = ws.acell("A1").value or ""
+    if not txt.strip():
+        return {}
+    try:
+        data = json.loads(txt)
+        return data if isinstance(data, dict) else {}
+    except Exception as e:
+        raise RuntimeError(f"解析 A1 JSON 失敗：{e}")
+
+def save_to_gsheet(data: Dict[str, Dict]) -> None:
+    """把整包 JSON 存到 A1；成功就算雲端持久化。"""
+    _, _, ws = _gsheet_init()
+    blob = json.dumps(data, ensure_ascii=False, indent=2)
+    ws.update("A1", blob)
 
 # ---------- 全局 BAN（總 Ban） ----------
 def get_global_bans(d: Dict[str, Dict]) -> List[str]:
@@ -112,7 +133,7 @@ def set_lane_bans(d: Dict[str, Dict], lane_bans: Dict[str, List[str]]) -> None:
         clean[lane] = sorted(dedupe([x for x in lst if x]))
     d["__lane_bans__"] = clean
 
-# ---------- 體系陣容（相容新版/舊版） ----------
+# ---------- 體系陣容 ----------
 CompMembers = List[str]
 CompData = Dict[str, Union[str, List[str]]]
 Compositions = Dict[str, Dict[str, Union[str, List[str]]]]
@@ -138,7 +159,7 @@ def get_compositions(d: Dict[str, Dict]) -> Compositions:
         return {}
     out: Compositions = {}
     for name, entry in raw.items():
-        if not name: 
+        if not name:
             continue
         out[name] = _normalize_comp_entry(entry)
     return out
@@ -255,7 +276,7 @@ def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
             return candidate
     return ""
 
-# ---------- 縮圖網格（純展示；全域外觀設定） ----------
+# ---------- UI 共用 ----------
 def render_image_grid(names: List[str], data: Dict[str, Dict], size:int, cols:int, show_names:bool):
     for i in range(0, len(names), cols):
         row = st.columns(cols)
@@ -285,7 +306,7 @@ def lane_tier_lines(h: Dict) -> List[str]:
             lines.append(f"{lane}：{lt}")
     return lines
 
-# ---------- 快速編輯面板 ----------
+# ---------- 快速編輯 ----------
 def quick_edit_panel(name: str):
     data = st.session_state.data
     if name not in data:
@@ -293,12 +314,10 @@ def quick_edit_panel(name: str):
     h = ensure_fields(data[name])
     st.markdown("### ✏️ 快速編輯：" + name)
     cols = st.columns(2)
-
     with cols[0]:
         p_main = get_hero_image_path(data, name)
         if p_main:
             st.image(p_main, caption=name, use_container_width=False)
-
     with cols[1]:
         tier = st.selectbox("T 度（可留白）", TIER_CHOICES,
                             index=TIER_CHOICES.index(h.get("tier", "")),
@@ -352,21 +371,21 @@ def quick_edit_panel(name: str):
                 }
                 if img_file is not None:
                     path = save_uploaded_image(name, img_file)
-                    if path: 
+                    if path:
                         data[name]["image"] = path
                 c = ensure_bidirectional_relationships(data)
                 save_data(data)
-                st.success(f"已保存『{name}』，修補 {c} 項")
+                st.success(f"已保存『{name}』到本地，修補 {c} 項")
         with b2:
             if st.button("❌ 關閉快速編輯", key=f"qe_close_{name}"):
                 st.session_state.quick_edit_name = ""
                 st.experimental_rerun()
 
-# ---------- UI ----------
+# ---------- App 佈局 ----------
 st.set_page_config(page_title="AOV戰略助手", page_icon="🛡️", layout="wide")
 st.title("🛡️ AOV戰略助手")
 
-# 側邊欄：極簡外觀設定 + Sheets 連線測試
+# 側邊欄：極簡外觀設定＋Sheets 測試
 with st.sidebar:
     st.markdown("### 介面設定")
     minimal = st.checkbox("極簡模式", value=True, help="自動使用較小縮圖與較多欄位，畫面更緊湊")
@@ -385,15 +404,12 @@ with st.sidebar:
 
     st.markdown("---")
     if st.button("🧪 測試 Google Sheets 連線"):
-        try:
-            ws = get_gsheet_client()
-            if ws:
-                ws.update_acell("B2", f"ping @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                st.success("✅ 成功：已在 B2 寫入 ping（到表單確認）")
-            else:
-                st.error("無法初始化 Google Sheets")
-        except Exception as e:
-            st.error(f"測試失敗：{e}")
+        ok, msg = test_gsheet_connection()
+        if ok:
+            st.success(msg)
+        else:
+            st.error("Google Sheets 初始化失敗：")
+            st.code(msg, language="text")
 
 # 狀態
 if "data" not in st.session_state:
@@ -414,42 +430,32 @@ if st.session_state.quick_edit_name:
 colA, colB, colC, colD, colE = st.columns([1,1,1,1,2])
 with colA:
     if st.button("💾 保存到 aov_heroes.json"):
-        save_data(data)
-        ok, msg = push_json_to_sheet(data)
-        if ok:
-            st.success("已保存並同步到 Google Sheets ✅")
-        else:
-            st.warning(f"已保存本地，但 {msg}")
-
+        save_data(data); st.success("已保存到本地檔案")
 with colB:
     if st.button("🧩 修正雙向關係"):
         c = ensure_bidirectional_relationships(data); save_data(data)
-        st.success(f"已修正 {c} 項")
-
+        st.success(f"已修正 {c} 項，並保存到本地")
 with colC:
-    if st.button("⬇️ 從 Google Sheets 載入"):
-        ok, obj = pull_json_from_sheet()
-        if ok:
-            st.session_state.data = obj
-            data = st.session_state.data
-            save_data(data)
-            st.success("已自 Sheets 載入並覆蓋本地 JSON ✅（重新整理後即生效）")
-        else:
-            st.error(obj if isinstance(obj, str) else "載入失敗")
-
-with colD:
-    uploaded = st.file_uploader("⬆️ 匯入 JSON（覆蓋現有資料）", type=["json"], label_visibility="collapsed", key="import_json")
-    if uploaded:
+    if st.button("⬆️ 存到 Google Sheets（A1）"):
         try:
-            st.session_state.data = json.load(uploaded)
-            data = st.session_state.data
-            save_data(data)
-            st.success("匯入成功！")
+            ensure_bidirectional_relationships(data)
+            save_to_gsheet(data)
+            st.success("已存到 Google Sheets（A1）")
         except Exception as e:
-            st.error(f"匯入失敗：{e}")
-
+            st.error("無法初始化 Google Sheets")
+            st.code(f"{e}\n{traceback.format_exc()}", language="text")
+with colD:
+    if st.button("⬇️ 從 Google Sheets 載入（A1）"):
+        try:
+            newdata = load_from_gsheet()
+            st.session_state.data = newdata
+            save_data(newdata)  # 同步一份到本地
+            st.success("已從 Google Sheets 載入，並同步到本地")
+        except Exception as e:
+            st.error("從 Google Sheets 載入失敗")
+            st.code(f"{e}\n{traceback.format_exc()}", language="text")
 with colE:
-    st.download_button("⬇️ 下載目前資料",
+    st.download_button("⬇️ 下載目前資料(JSON)",
                        data=json.dumps(data, ensure_ascii=False, indent=2),
                        file_name="aov_heroes.json")
 
@@ -587,7 +593,7 @@ with tab1:
                         if path:
                             data[picked]["image"] = path
                     c = ensure_bidirectional_relationships(data); save_data(data)
-                    st.success(f"已更新『{picked}』，修補 {c} 項")
+                    st.success(f"已更新『{picked}』到本地，修補 {c} 項")
             with coly:
                 if st.button("🗑️ 刪除該英雄", key=f"btn_delete_{picked}"):
                     if h.get("image") and os.path.exists(h["image"]):
@@ -615,7 +621,7 @@ with tab1:
                     if changed:
                         set_compositions(data, comps)
                     c = ensure_bidirectional_relationships(data); save_data(data)
-                    st.success(f"已刪除『{picked}』，並修補 {c} 項")
+                    st.success(f"已刪除『{picked}』並保存到本地，修補 {c} 項")
             with colz:
                 if st.button("🖼️ 只更新圖片", key=f"btn_img_only_{picked}"):
                     if img_file is None:
@@ -625,7 +631,7 @@ with tab1:
                         if path:
                             data[picked]["image"] = path
                             save_data(data)
-                            st.success("圖片已更新！")
+                            st.success("圖片已更新並寫入本地！")
                 st.download_button("⬇️ 下載目前資料(JSON)",
                                    data=json.dumps(data, ensure_ascii=False, indent=2),
                                    file_name="aov_heroes.json",
@@ -677,7 +683,7 @@ with tab2:
             "synergy": [],
         }
         c = ensure_bidirectional_relationships(data); save_data(data)
-        st.success(f"已新增『{name}』，修補 {c} 項")
+        st.success(f"已新增『{name}』到本地，修補 {c} 項")
 
 # --------- 體系陣容 ---------
 with tabComp:
@@ -710,19 +716,19 @@ with tabComp:
 
             st.markdown("**核心英雄（Core）**")
             if core:
-                render_image_grid([core], data, size=thumb_size, cols=1, show_names=show_names)
+                render_image_grid([core], data, size=64, cols=1, show_names=True)
             else:
                 st.caption("（未設定）")
 
             st.markdown("**成員（Members）**")
             if members:
-                render_image_grid(members, data, size=thumb_size, cols=grid_cols, show_names=show_names)
+                render_image_grid(members, data, size=64, cols=8, show_names=True)
             else:
                 st.caption("（尚無成員）")
 
             st.markdown("**被克制（這個體系怕誰）**")
             if ctrs:
-                render_image_grid(ctrs, data, size=thumb_size, cols=grid_cols, show_names=show_names)
+                render_image_grid(ctrs, data, size=64, cols=8, show_names=True)
             else:
                 st.caption("（尚未指定）")
 
@@ -837,7 +843,7 @@ with tabLib:
 
     items: List[Tuple[str, Dict]] = []
     for name in sorted(data.keys()):
-        if name.startswith("__"): 
+        if name.startswith("__"):
             continue
         h = ensure_fields(data[name])
         if lane_filter != "全部" and lane_filter not in h["lanes"]:
@@ -861,7 +867,7 @@ with tabTier:
 
     lists = {"T0":[],"T1":[],"T2":[],"T3":[],"特殊":[]}
     for n, h in sorted(data.items()):
-        if n.startswith("__"): 
+        if n.startswith("__"):
             continue
         t = ensure_fields(h)["lane_tiers"].get(target_lane, "")
         if t in lists:
