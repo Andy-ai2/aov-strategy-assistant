@@ -1,25 +1,20 @@
 # app.py
-# AOV 戰略助手（完整版）
-# 功能：
-# - 查詢 / 即時編輯 / 快速編輯 / 刪除
-# - 新增英雄
-# - 體系陣容（核心 / 成員 / 被克制；操作區收合）
-# - Ban Pick（總 Ban、各分路 Ban）
-# - 英雄庫（篩選：路線 / 職業 / 路線 T 度）
-# - Tier 排行（依分路）
-# - 雙向關係修補（counters <-> countered_by）
-# 穩定性：
-# - aov_heroes.json & hero_images 以「絕對路徑」儲存
-# - 原子寫入 save（先寫暫存檔再替換）
+# AOV戰略助手（極簡模式＋側邊欄外觀設定＋體系操作區收合）
+# 功能：查詢/新增/更新/刪除/雙向修補/Ban Pick（總Ban/各分路Ban｜僅輸入名字）/英雄庫/Tier 排行/體系陣容（含核心與被克制｜僅輸入名字）
+# 強化：全站縮圖純展示；支援 Google Sheets 同步（A1 存 JSON；B1 存時間戳）；側邊欄提供「🧪 測試連線」
 
-import json, os, re, tempfile, shutil
+import json, os, re
 from typing import Dict, List, Tuple, Union
+from datetime import datetime
 import streamlit as st
 
-# ========== 位置與常數 ==========
-BASE_DIR = os.path.abspath(os.path.dirname(__file__)) if "__file__" in globals() else os.path.abspath(os.getcwd())
-DATA_FILE = os.path.join(BASE_DIR, "aov_heroes.json")
-IMAGES_DIR = os.path.join(BASE_DIR, "hero_images")
+# === Google Sheets 連線套件 ===
+import gspread
+from google.oauth2 import service_account
+
+# ---------- 常數與檔案 ----------
+DATA_FILE = "aov_heroes.json"
+IMAGES_DIR = "hero_images"
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
 ROLE_CHOICES = ["坦克", "戰士", "刺客", "法師", "射手", "輔助"]
@@ -32,8 +27,36 @@ ALLOWED_IMAGE_TYPES = ["png","jpg","jpeg","webp"]
 def tier_rank(t:str)->int:
     return TIER_WEIGHT.get(t, len(TIER_ORDER))
 
-# ========== I/O ==========
+# ---------- Google Sheets 連線 ----------
+def _sheet_connect():
+    """以 Streamlit Secrets 連到指定試算表分頁。"""
+    creds = service_account.Credentials.from_service_account_info(
+        dict(st.secrets["gcp_service_account"]),
+        scopes=[
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive",
+        ],
+    )
+    gc = gspread.authorize(creds)
+    sh = gc.open_by_key(st.secrets["GSHEET_ID"])
+    tab = st.secrets.get("GSHEET_TAB", "工作表1")
+    ws = sh.worksheet(tab)
+    return ws
+
+# ---------- I/O（本地 + 雲端） ----------
 def load_data()->Dict[str,Dict]:
+    """優先從 Google Sheets 的 A1 讀 JSON；失敗改讀本地 JSON。"""
+    try:
+        if "gcp_service_account" in st.secrets and "GSHEET_ID" in st.secrets:
+            ws = _sheet_connect()
+            txt = ws.acell("A1").value or "{}"
+            data = json.loads(txt)
+            if isinstance(data, dict):
+                st.caption("✅ 從 Google Sheets 載入成功")
+                return data
+    except Exception as e:
+        st.warning(f"Sheets 讀取失敗，改用本地檔：{e}")
+
     if not os.path.exists(DATA_FILE):
         return {}
     try:
@@ -43,19 +66,21 @@ def load_data()->Dict[str,Dict]:
     except Exception:
         return {}
 
-def _atomic_write_text(path: str, text: str):
-    # 原子寫入避免中途中斷
-    dir_name = os.path.dirname(path) or "."
-    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=dir_name, delete=False) as tf:
-        tf.write(text)
-        tmp_name = tf.name
-    os.replace(tmp_name, path)
-
 def save_data(data:Dict[str,Dict])->None:
-    payload = json.dumps(data, ensure_ascii=False, indent=2)
-    _atomic_write_text(DATA_FILE, payload)
+    """先寫本地檔，再嘗試同步到 Google Sheets（A1）。"""
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    try:
+        if "gcp_service_account" in st.secrets and "GSHEET_ID" in st.secrets:
+            ws = _sheet_connect()
+            ws.clear()
+            ws.update("A1", [[json.dumps(data, ensure_ascii=False)]])
+            ws.update("B1", [[f"last_save: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"]])
+            st.toast("☁️ 已同步到 Google Sheets")
+    except Exception as e:
+        st.error(f"寫入 Sheets 失敗（但本地已保存）：{e}")
 
-# ========== 全局 BAN（總 Ban） ==========
+# ---------- 全局 BAN（總 Ban） ----------
 def get_global_bans(d: Dict[str, Dict]) -> List[str]:
     v = d.get("__ban_list__", [])
     return list(v) if isinstance(v, list) else []
@@ -63,7 +88,7 @@ def get_global_bans(d: Dict[str, Dict]) -> List[str]:
 def set_global_bans(d: Dict[str, Dict], bans: List[str]) -> None:
     d["__ban_list__"] = sorted(dedupe([b for b in bans if b]))
 
-# ========== 各分路 BAN ==========
+# ---------- 各分路 BAN ----------
 def get_lane_bans(d: Dict[str, Dict]) -> Dict[str, List[str]]:
     v = d.get("__lane_bans__", {})
     if not isinstance(v, dict):
@@ -81,7 +106,7 @@ def set_lane_bans(d: Dict[str, Dict], lane_bans: Dict[str, List[str]]) -> None:
         clean[lane] = sorted(dedupe([x for x in lst if x]))
     d["__lane_bans__"] = clean
 
-# ========== 體系陣容（相容新版/舊版） ==========
+# ---------- 體系陣容（相容新版/舊版） ----------
 CompMembers = List[str]
 CompData = Dict[str, Union[str, List[str]]]
 Compositions = Dict[str, Dict[str, Union[str, List[str]]]]
@@ -107,7 +132,7 @@ def get_compositions(d: Dict[str, Dict]) -> Compositions:
         return {}
     out: Compositions = {}
     for name, entry in raw.items():
-        if not name:
+        if not name: 
             continue
         out[name] = _normalize_comp_entry(entry)
     return out
@@ -121,7 +146,7 @@ def set_compositions(d: Dict[str, Dict], comps: Compositions) -> None:
         clean[name] = norm
     d["__compositions__"] = clean
 
-# ========== 小工具 ==========
+# ---------- 小工具 ----------
 def dedupe(xs:List[str])->List[str]:
     seen, out = set(), []
     for x in xs:
@@ -159,13 +184,13 @@ def ensure_fields(h: Dict) -> Dict:
 def ensure_bidirectional_relationships(data: Dict[str, Dict]) -> int:
     changes = 0
     for k,v in list(data.items()):
-        if k.startswith("__"):
+        if k.startswith("__"):  # 略過全局鍵
             continue
         data[k] = ensure_fields(v)
     names = {n for n in data.keys() if not n.startswith("__")}
 
     for name, h in list(data.items()):
-        if name.startswith("__"):
+        if name.startswith("__"):  # 跳過全局鍵
             continue
         for key in ["counters","countered_by","ban_targets","synergy"]:
             before = len(h.get(key, []))
@@ -206,7 +231,6 @@ def save_uploaded_image(hero_name: str, uploaded_file) -> str:
 
 def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
     h = data.get(name) or {}
-    # 1) JSON 欄位
     p = h.get("image", "")
     if p:
         candidate = p
@@ -214,20 +238,18 @@ def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
             candidate = os.path.join(IMAGES_DIR, os.path.basename(candidate))
         if os.path.exists(candidate):
             return candidate
-    # 2) safe_slug
     base = safe_slug(name)
     for ext in ALLOWED_IMAGE_TYPES:
         candidate = os.path.join(IMAGES_DIR, f"{base}.{ext}")
         if os.path.exists(candidate):
             return candidate
-    # 3) 原始英雄名
     for ext in ALLOWED_IMAGE_TYPES:
         candidate = os.path.join(IMAGES_DIR, f"{name}.{ext}")
         if os.path.exists(candidate):
             return candidate
     return ""
 
-# ========== UI 共用 ==========
+# ---------- 縮圖網格（純展示） ----------
 def render_image_grid(names: List[str], data: Dict[str, Dict], size:int, cols:int, show_names:bool):
     for i in range(0, len(names), cols):
         row = st.columns(cols)
@@ -257,7 +279,7 @@ def lane_tier_lines(h: Dict) -> List[str]:
             lines.append(f"{lane}：{lt}")
     return lines
 
-# ========== 快速編輯面板 ==========
+# ---------- 快速編輯面板 ----------
 def quick_edit_panel(name: str):
     data = st.session_state.data
     if name not in data:
@@ -324,7 +346,7 @@ def quick_edit_panel(name: str):
                 }
                 if img_file is not None:
                     path = save_uploaded_image(name, img_file)
-                    if path:
+                    if path: 
                         data[name]["image"] = path
                 c = ensure_bidirectional_relationships(data)
                 save_data(data)
@@ -334,14 +356,14 @@ def quick_edit_panel(name: str):
                 st.session_state.quick_edit_name = ""
                 st.experimental_rerun()
 
-# ========== 頁面設定 ==========
+# ---------- UI ----------
 st.set_page_config(page_title="AOV戰略助手", page_icon="🛡️", layout="wide")
 st.title("🛡️ AOV戰略助手")
 
-# 側邊欄：極簡外觀設定
+# 側邊欄：極簡外觀設定 + 連線測試
 with st.sidebar:
     st.markdown("### 介面設定")
-    minimal = st.checkbox("極簡模式", value=True, help="較小縮圖、較多欄位，畫面更緊湊")
+    minimal = st.checkbox("極簡模式", value=True, help="自動使用較小縮圖與較多欄位，畫面更緊湊")
     if minimal:
         default_thumb = 64
         default_cols  = 10
@@ -354,6 +376,15 @@ with st.sidebar:
     thumb_size = st.slider("縮圖大小", 48, 112, default_thumb, step=4)
     grid_cols  = st.slider("每列數量", 4, 14, default_cols, step=1)
     show_names = st.checkbox("顯示名稱", value=default_show_names)
+
+    st.markdown("---")
+    if st.button("🧪 測試 Google Sheets 連線"):
+        try:
+            ws = _sheet_connect()
+            ws.update("B2", [[f"ping @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"]])
+            st.success("成功：已在 B2 寫入 ping（請到表單確認）")
+        except Exception as e:
+            st.error(f"測試失敗：{e}")
 
 # 狀態
 if "data" not in st.session_state:
@@ -370,11 +401,11 @@ if st.session_state.quick_edit_name:
     quick_edit_panel(st.session_state.quick_edit_name)
     st.divider()
 
-# 工具列
+# Toolbar
 colA, colB, colC, colD = st.columns([1,1,1,2])
 with colA:
-    if st.button("💾 保存到 aov_heroes.json"):
-        save_data(data); st.success(f"已保存到：{DATA_FILE}")
+    if st.button("💾 保存到 aov_heroes.json（並同步雲端）"):
+        save_data(data); st.success("已保存（本地＋Sheets）")
 with colB:
     if st.button("🧩 修正雙向關係"):
         c = ensure_bidirectional_relationships(data); save_data(data)
@@ -386,7 +417,7 @@ with colC:
             st.session_state.data = json.load(uploaded)
             data = st.session_state.data
             save_data(data)
-            st.success("匯入成功並已保存！")
+            st.success("匯入成功並已同步！")
         except Exception as e:
             st.error(f"匯入失敗：{e}")
 with colD:
@@ -406,7 +437,7 @@ st.divider()
     "⚔️ Tier 排行"
 ])
 
-# --------- 查詢 / 編輯 ---------
+# --------- 查詢/編輯 ---------
 with tab1:
     left, right = st.columns([1,1])
     with left:
@@ -457,7 +488,6 @@ with tab1:
             else:
                 st.caption("—")
 
-            # 所屬體系
             comps = get_compositions(data)
             belong = [cname for cname, cdata in comps.items() if picked in (cdata.get("members") or [])]
             if belong:
@@ -540,7 +570,6 @@ with tab1:
                         if isinstance(hh, dict) and "counters" in hh:
                             for key in ["counters","countered_by","ban_targets","synergy"]:
                                 hh[key] = [x for x in hh[key] if x != picked]
-                    # 從體系移除/清理
                     comps = get_compositions(data)
                     changed = False
                     for cname in list(comps.keys()):
@@ -622,7 +651,7 @@ with tab2:
         c = ensure_bidirectional_relationships(data); save_data(data)
         st.success(f"已新增『{name}』，修補 {c} 項")
 
-# --------- 體系陣容（操作收合；純展示縮圖） ---------
+# --------- 體系陣容（純展示＋可管理） ---------
 with tabComp:
     st.subheader("🏹 體系陣容")
     comps = get_compositions(data)
@@ -707,7 +736,7 @@ with tabComp:
 
             st.divider()
 
-# --------- Ban Pick（名字輸入；純展示縮圖） ---------
+# --------- Ban Pick（純展示） ---------
 with tabBan:
     st.subheader("🛑 Ban Pick")
     mode = st.radio("顯示模式", ["總 Ban", "各分路 Ban"], horizontal=True, key="ban_mode")
@@ -763,7 +792,7 @@ with tabBan:
                 set_lane_bans(data, lane_bans); save_data(data)
                 st.success("已更新！")
 
-# --------- 英雄庫（篩選；純展示縮圖） ---------
+# --------- 英雄庫（純展示） ---------
 with tabLib:
     st.subheader("🖼️ 英雄庫")
     colf1, colf2, colf3 = st.columns(3)
@@ -780,7 +809,7 @@ with tabLib:
 
     items: List[Tuple[str, Dict]] = []
     for name in sorted(data.keys()):
-        if name.startswith("__"):
+        if name.startswith("__"): 
             continue
         h = ensure_fields(data[name])
         if lane_filter != "全部" and lane_filter not in h["lanes"]:
@@ -797,14 +826,14 @@ with tabLib:
     else:
         render_image_grid([nm for nm,_ in items], data, size=thumb_size, cols=grid_cols, show_names=show_names)
 
-# --------- Tier 排行（唯讀；純展示縮圖） ---------
+# --------- Tier 排行（純展示） ---------
 with tabTier:
     st.subheader("⚔️ 英雄 Tier 排行")
     target_lane = st.selectbox("選擇路線", LANE_CHOICES, index=2, key="tier_lane_view")
 
     lists = {"T0":[],"T1":[],"T2":[],"T3":[],"特殊":[]}
     for n, h in sorted(data.items()):
-        if n.startswith("__"):
+        if n.startswith("__"): 
             continue
         t = ensure_fields(h)["lane_tiers"].get(target_lane, "")
         if t in lists:
