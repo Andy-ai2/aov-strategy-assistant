@@ -1,19 +1,20 @@
 # app.py
-# AOV戰略助手（極簡模式＋側邊欄外觀設定＋體系操作區收合）
+# AOV戰略助手（極簡模式＋側邊欄外觀設定＋體系操作區收合＋持久化修補）
 # 功能：查詢/新增/更新/刪除/雙向修補/Ban Pick（總Ban/各分路Ban｜僅輸入名字）/英雄庫/Tier 排行/體系陣容（含核心與被克制｜僅輸入名字）
-# 極簡強化：
-# - 側邊欄可切換「極簡模式」：自動使用較小縮圖與較多欄位、更緊湊
-# - 側邊欄可調整縮圖大小與每列數量、是否顯示名稱（全域套用）
-# - 體系陣容：所有輸入操作區改為收合面板（預設收合），畫面更乾淨
-# - 全站縮圖「純展示」——無任何點擊/按鈕
+# 強化要點：
+# - 資料與圖片路徑固定到程式所在資料夾（避免工作目錄漂移）
+# - 匯入 JSON 僅在首次上傳時覆蓋，避免每次 rerun 把新資料蓋掉
+# - 圖片：JSON 只存相對路徑 hero_images/檔名；顯示時自動轉絕對路徑
+# - 每次保存顯示實際寫入路徑，方便除錯
 
 import json, os, re
 from typing import Dict, List, Tuple, Union
 import streamlit as st
 
-# ---------- 常數與檔案 ----------
-DATA_FILE = "aov_heroes.json"
-IMAGES_DIR = "hero_images"
+# ---------- 常數與檔案（改成絕對路徑） ----------
+BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE  = os.path.join(BASE_DIR, "aov_heroes.json")
+IMAGES_DIR = os.path.join(BASE_DIR, "hero_images")
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
 ROLE_CHOICES = ["坦克", "戰士", "刺客", "法師", "射手", "輔助"]
@@ -38,6 +39,7 @@ def load_data()->Dict[str,Dict]:
         return {}
 
 def save_data(data:Dict[str,Dict])->None:
+    # 寫檔
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
@@ -93,7 +95,7 @@ def get_compositions(d: Dict[str, Dict]) -> Compositions:
         return {}
     out: Compositions = {}
     for name, entry in raw.items():
-        if not name: 
+        if not name:
             continue
         out[name] = _normalize_comp_entry(entry)
     return out
@@ -145,13 +147,13 @@ def ensure_fields(h: Dict) -> Dict:
 def ensure_bidirectional_relationships(data: Dict[str, Dict]) -> int:
     changes = 0
     for k,v in list(data.items()):
-        if k.startswith("__"):  # 略過全局鍵
+        if k.startswith("__"):
             continue
         data[k] = ensure_fields(v)
     names = {n for n in data.keys() if not n.startswith("__")}
 
     for name, h in list(data.items()):
-        if name.startswith("__"):  # 跳過全局鍵
+        if name.startswith("__"):
             continue
         for key in ["counters","countered_by","ban_targets","synergy"]:
             before = len(h.get(key, []))
@@ -178,6 +180,26 @@ def safe_slug(text: str) -> str:
     text = re.sub(r"[^\w\u4e00-\u9fff]+", "_", text)
     return re.sub(r"_+", "_", text).strip("_")
 
+def _to_rel_image_path(filename: str) -> str:
+    # 存在 JSON 的相對路徑（跨平台一律用 /）
+    return "hero_images/" + filename
+
+def _to_abs_image_path(rel_or_abs: str) -> str:
+    # 轉成絕對路徑顯示
+    if not rel_or_abs:
+        return ""
+    # 已是絕對路徑
+    if os.path.isabs(rel_or_abs) and os.path.exists(rel_or_abs):
+        return rel_or_abs
+    # 若是像 hero_images\xxx.png 或 hero_images/xxx.png
+    rel = rel_or_abs.replace("\\", "/")
+    if rel.startswith("hero_images/"):
+        abs_path = os.path.join(BASE_DIR, rel)
+        return abs_path
+    # 只是一個檔名
+    abs_path = os.path.join(IMAGES_DIR, os.path.basename(rel))
+    return abs_path
+
 def save_uploaded_image(hero_name: str, uploaded_file) -> str:
     if uploaded_file is None: return ""
     ext = uploaded_file.name.split(".")[-1].lower()
@@ -185,19 +207,18 @@ def save_uploaded_image(hero_name: str, uploaded_file) -> str:
         st.error("只接受 png/jpg/jpeg/webp 圖片格式")
         return ""
     filename = f"{safe_slug(hero_name)}.{ext}"
-    path = os.path.join(IMAGES_DIR, filename)
-    with open(path, "wb") as f:
+    abs_path = os.path.join(IMAGES_DIR, filename)
+    with open(abs_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
-    return path
+    # 回存 JSON 用相對路徑
+    return _to_rel_image_path(filename)
 
 def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
     h = data.get(name) or {}
-    # 1) 先嘗試用 JSON 內的欄位
+    # 1) 先嘗試 JSON 內的欄位
     p = h.get("image", "")
     if p:
-        candidate = p
-        if not os.path.isabs(candidate) and not candidate.startswith(IMAGES_DIR):
-            candidate = os.path.join(IMAGES_DIR, os.path.basename(candidate))
+        candidate = _to_abs_image_path(p)
         if os.path.exists(candidate):
             return candidate
     # 2) safe_slug(英雄名)
@@ -243,7 +264,7 @@ def lane_tier_lines(h: Dict) -> List[str]:
             lines.append(f"{lane}：{lt}")
     return lines
 
-# ---------- 快速編輯面板（修正變數與縮排） ----------
+# ---------- 快速編輯面板 ----------
 def quick_edit_panel(name: str):
     data = st.session_state.data
     if name not in data:
@@ -252,7 +273,7 @@ def quick_edit_panel(name: str):
     st.markdown("### ✏️ 快速編輯：" + name)
     cols = st.columns(2)
 
-    # 左側：圖片預覽（使用 name，不再誤用 picked）
+    # 左側：圖片預覽
     with cols[0]:
         p_main = get_hero_image_path(data, name)
         if p_main:
@@ -288,7 +309,6 @@ def quick_edit_panel(name: str):
         counters = st.text_input("克制（逗號或空白分隔）",
                                  " ".join(h["counters"]),
                                  key=f"qe_counters_{name}")
-        # 保留舊值顯示；保存時從 session 取
         st.text_input("被克制（逗號或空白分隔）",
                       " ".join(h["countered_by"]),
                       key=f"qe_countered_by_{name}")
@@ -312,12 +332,12 @@ def quick_edit_panel(name: str):
                     "synergy": h.get("synergy", []),
                 }
                 if img_file is not None:
-                    path = save_uploaded_image(name, img_file)
-                    if path: 
-                        data[name]["image"] = path
+                    rel_path = save_uploaded_image(name, img_file)
+                    if rel_path:
+                        data[name]["image"] = rel_path
                 c = ensure_bidirectional_relationships(data)
                 save_data(data)
-                st.success(f"已保存『{name}』，修補 {c} 項")
+                st.success(f"已保存『{name}』，修補 {c} 項；寫入：{DATA_FILE}")
         with b2:
             if st.button("❌ 關閉快速編輯", key=f"qe_close_{name}"):
                 st.session_state.quick_edit_name = ""
@@ -327,9 +347,11 @@ def quick_edit_panel(name: str):
 st.set_page_config(page_title="AOV戰略助手", page_icon="🛡️", layout="wide")
 st.title("🛡️ AOV戰略助手")
 
-# 側邊欄：極簡外觀設定
 with st.sidebar:
     st.markdown("### 介面設定")
+    # 溫馨提醒（雲端部署易失）
+    st.caption("若部署在雲端，請將 aov_heroes.json 納入版本控管或接資料庫以避免重啟遺失。")
+
     minimal = st.checkbox("極簡模式", value=True, help="自動使用較小縮圖與較多欄位，畫面更緊湊")
     if minimal:
         default_thumb = 64
@@ -351,6 +373,8 @@ if "picked_name" not in st.session_state:
     st.session_state.picked_name = "（請選擇）"
 if "quick_edit_name" not in st.session_state:
     st.session_state.quick_edit_name = ""
+if "import_applied" not in st.session_state:
+    st.session_state.import_applied = False  # 匯入檔案只套用一次
 
 data: Dict[str, Dict] = st.session_state.data
 
@@ -360,27 +384,34 @@ if st.session_state.quick_edit_name:
     st.divider()
 
 # Toolbar
-colA, colB, colC, colD = st.columns([1,1,1,2])
+colA, colB, colC, colD, colE = st.columns([1,1,1,2,1])
 with colA:
     if st.button("💾 保存到 aov_heroes.json"):
-        save_data(data); st.success("已保存")
+        save_data(data)
+        st.success(f"已保存；寫入：{DATA_FILE}")
 with colB:
     if st.button("🧩 修正雙向關係"):
         c = ensure_bidirectional_relationships(data); save_data(data)
-        st.success(f"已修正 {c} 項")
+        st.success(f"已修正 {c} 項；寫入：{DATA_FILE}")
 with colC:
     uploaded = st.file_uploader("⬆️ 匯入 JSON（覆蓋現有資料）", type=["json"], label_visibility="collapsed", key="import_json")
-    if uploaded:
+    if uploaded and not st.session_state.import_applied:
         try:
             st.session_state.data = json.load(uploaded)
             data = st.session_state.data
-            st.success("匯入成功！")
+            st.session_state.import_applied = True
+            st.success("匯入成功！（此檔已套用一次，下次需點右側重置）")
         except Exception as e:
             st.error(f"匯入失敗：{e}")
 with colD:
     st.download_button("⬇️ 下載目前資料",
                        data=json.dumps(data, ensure_ascii=False, indent=2),
                        file_name="aov_heroes.json")
+with colE:
+    # 重置匯入旗標，允許再次套用上傳檔
+    if st.button("🔄 重置匯入狀態"):
+        st.session_state.import_applied = False
+        st.info("已重置：下一次選檔後會再次套用匯入。")
 
 st.divider()
 
@@ -413,7 +444,6 @@ with tab1:
                               index=default_index,
                               key="picked_name")
 
-        # 安全縮排：只有選到英雄時才會使用 p_main / h
         if picked != "（請選擇）" and picked in data:
             h = ensure_fields(data[picked])
             st.subheader(f"📄 {picked}")
@@ -446,7 +476,6 @@ with tab1:
             else:
                 st.caption("—")
 
-            # 所屬體系
             comps = get_compositions(data)
             belong = [cname for cname, cdata in comps.items() if picked in (cdata.get("members") or [])]
             if belong:
@@ -514,16 +543,19 @@ with tab1:
                         "synergy": h.get("synergy", []),
                     }
                     if img_file is not None:
-                        path = save_uploaded_image(picked, img_file)
-                        if path:
-                            data[picked]["image"] = path
+                        rel_path = save_uploaded_image(picked, img_file)
+                        if rel_path:
+                            data[picked]["image"] = rel_path
                     c = ensure_bidirectional_relationships(data); save_data(data)
-                    st.success(f"已更新『{picked}』，修補 {c} 項")
+                    st.success(f"已更新『{picked}』，修補 {c} 項；寫入：{DATA_FILE}")
             with coly:
                 if st.button("🗑️ 刪除該英雄", key=f"btn_delete_{picked}"):
-                    if h.get("image") and os.path.exists(h["image"]):
-                        try: os.remove(h["image"])
+                    # 嘗試移除舊圖片（若是相對路徑會轉換成絕對）
+                    pimg = get_hero_image_path(data, picked)
+                    if pimg and os.path.exists(pimg):
+                        try: os.remove(pimg)
                         except Exception: pass
+
                     del data[picked]
                     for hh in data.values():
                         if isinstance(hh, dict) and "counters" in hh:
@@ -547,17 +579,17 @@ with tab1:
                     if changed:
                         set_compositions(data, comps)
                     c = ensure_bidirectional_relationships(data); save_data(data)
-                    st.success(f"已刪除『{picked}』，並修補 {c} 項")
+                    st.success(f"已刪除『{picked}』，並修補 {c} 項；寫入：{DATA_FILE}")
             with colz:
                 if st.button("🖼️ 只更新圖片", key=f"btn_img_only_{picked}"):
                     if img_file is None:
                         st.warning("請先選擇圖片檔")
                     else:
-                        path = save_uploaded_image(picked, img_file)
-                        if path:
-                            data[picked]["image"] = path
+                        rel_path = save_uploaded_image(picked, img_file)
+                        if rel_path:
+                            data[picked]["image"] = rel_path
                             save_data(data)
-                            st.success("圖片已更新！")
+                            st.success(f"圖片已更新！寫入：{DATA_FILE}")
                 st.download_button("⬇️ 下載目前資料(JSON)",
                                    data=json.dumps(data, ensure_ascii=False, indent=2),
                                    file_name="aov_heroes.json",
@@ -609,7 +641,7 @@ with tab2:
             "synergy": [],
         }
         c = ensure_bidirectional_relationships(data); save_data(data)
-        st.success(f"已新增『{name}』，修補 {c} 項")
+        st.success(f"已新增『{name}』，修補 {c} 項；寫入：{DATA_FILE}")
 
 # --------- 體系陣容（輸入操作收合；純展示縮圖） ---------
 with tabComp:
@@ -626,7 +658,7 @@ with tabComp:
             else:
                 comps[new_comp] = {"members": [], "core": "", "counters": []}
                 set_compositions(data, comps); save_data(data)
-                st.success(f"已建立體系：{new_comp}")
+                st.success(f"已建立體系：{new_comp}；寫入：{DATA_FILE}")
 
     st.divider()
 
@@ -666,33 +698,33 @@ with tabComp:
                         new_members = sorted(dedupe(members + norm_list(add_free)))
                         comps[cname]["members"] = new_members
                         set_compositions(data, comps); save_data(data)
-                        st.success("已加入！")
+                        st.success(f"已加入！寫入：{DATA_FILE}")
                     rm_free = st.text_input("移除成員（逗號/空白分隔）", key=f"comp_rm_free_{cname}")
                     if st.button("移除成員", key=f"comp_btn_rm_{cname}"):
                         rm_list = set(norm_list(rm_free))
                         comps[cname]["members"] = [x for x in members if x not in rm_list]
                         set_compositions(data, comps); save_data(data)
-                        st.success("已移除！")
+                        st.success(f"已移除！寫入：{DATA_FILE}")
 
                 with col2:
                     core_free = st.text_input("核心英雄（輸入名字）", value=core, key=f"comp_core_free_{cname}")
                     if st.button("套用核心", key=f"comp_btn_core_{cname}"):
                         comps[cname]["core"] = core_free.strip()
                         set_compositions(data, comps); save_data(data)
-                        st.success("核心已更新！")
+                        st.success(f"核心已更新！寫入：{DATA_FILE}")
 
                 with col3:
                     ctr_free = st.text_input("被哪些英雄克制（逗號/空白分隔）", value=" ".join(ctrs), key=f"comp_ctr_free_{cname}")
                     if st.button("套用被克制", key=f"comp_btn_ctr_{cname}"):
                         comps[cname]["counters"] = sorted(dedupe(norm_list(ctr_free)))
                         set_compositions(data, comps); save_data(data)
-                        st.success("被克制清單已更新！")
+                        st.success(f"被克制清單已更新！寫入：{DATA_FILE}")
 
                 st.markdown("---")
                 if st.button("🗑️ 刪除這個體系", key=f"comp_btn_del_{cname}"):
                     comps.pop(cname, None)
                     set_compositions(data, comps); save_data(data)
-                    st.success("已刪除體系")
+                    st.success(f"已刪除體系；寫入：{DATA_FILE}")
 
             st.divider()
 
@@ -715,7 +747,7 @@ with tabBan:
             if st.button("加入 Ban", key="ban_add"):
                 new_list = current_bans + norm_list(extra)
                 set_global_bans(data, new_list); save_data(data)
-                st.success("已加入 Ban！")
+                st.success(f"已加入 Ban！寫入：{DATA_FILE}")
 
             st.markdown("**移除**")
             remove_text = st.text_input("輸入要移除的名字（逗號/空白分隔）", key="ban_remove_text")
@@ -723,7 +755,7 @@ with tabBan:
                 to_remove = set(norm_list(remove_text))
                 remain = [b for b in current_bans if b not in to_remove]
                 set_global_bans(data, remain); save_data(data)
-                st.success("已更新 Ban！")
+                st.success(f"已更新 Ban！寫入：{DATA_FILE}")
 
     else:
         st.markdown("### Ban")
@@ -742,7 +774,7 @@ with tabBan:
             if st.button("加入 Ban（此路線）", key=f"lane_ban_add_{lane_sel}"):
                 lane_bans[lane_sel] = sorted(dedupe(lst + norm_list(extra)))
                 set_lane_bans(data, lane_bans); save_data(data)
-                st.success(f"已加入 {lane_sel} 的 Ban！")
+                st.success(f"已加入 {lane_sel} 的 Ban！寫入：{DATA_FILE}")
 
             st.markdown("**移除**")
             rm_text = st.text_input("輸入要移除的名字（逗號/空白分隔）", key=f"lane_ban_remove_txt_{lane_sel}")
@@ -750,7 +782,7 @@ with tabBan:
                 to_remove = set(norm_list(rm_text))
                 lane_bans[lane_sel] = [b for b in lst if b not in to_remove]
                 set_lane_bans(data, lane_bans); save_data(data)
-                st.success("已更新！")
+                st.success(f"已更新！寫入：{DATA_FILE}")
 
 # --------- 英雄庫（職業/路線/T度；純展示縮圖） ---------
 with tabLib:
@@ -769,7 +801,7 @@ with tabLib:
 
     items: List[Tuple[str, Dict]] = []
     for name in sorted(data.keys()):
-        if name.startswith("__"): 
+        if name.startswith("__"):
             continue
         h = ensure_fields(data[name])
         if lane_filter != "全部" and lane_filter not in h["lanes"]:
@@ -793,7 +825,7 @@ with tabTier:
 
     lists = {"T0":[],"T1":[],"T2":[],"T3":[],"特殊":[]}
     for n, h in sorted(data.items()):
-        if n.startswith("__"): 
+        if n.startswith("__"):
             continue
         t = ensure_fields(h)["lane_tiers"].get(target_lane, "")
         if t in lists:
