@@ -1,19 +1,25 @@
 # app.py
-# AOV戰略助手（極簡模式＋側邊欄外觀設定＋體系操作區收合）
-# 功能：查詢/新增/更新/刪除/雙向修補/Ban Pick（總Ban/各分路Ban｜僅輸入名字）/英雄庫/Tier 排行/體系陣容（含核心與被克制｜僅輸入名字）
-# 極簡強化：
-# - 側邊欄可切換「極簡模式」：自動使用較小縮圖與較多欄位、更緊湊
-# - 側邊欄可調整縮圖大小與每列數量、是否顯示名稱（全域套用）
-# - 體系陣容：所有輸入操作區改為收合面板（預設收合），畫面更乾淨
-# - 全站縮圖「純展示」——無任何點擊/按鈕
+# AOV 戰略助手（完整版）
+# 功能：
+# - 查詢 / 即時編輯 / 快速編輯 / 刪除
+# - 新增英雄
+# - 體系陣容（核心 / 成員 / 被克制；操作區收合）
+# - Ban Pick（總 Ban、各分路 Ban）
+# - 英雄庫（篩選：路線 / 職業 / 路線 T 度）
+# - Tier 排行（依分路）
+# - 雙向關係修補（counters <-> countered_by）
+# 穩定性：
+# - aov_heroes.json & hero_images 以「絕對路徑」儲存
+# - 原子寫入 save（先寫暫存檔再替換）
 
-import json, os, re
+import json, os, re, tempfile, shutil
 from typing import Dict, List, Tuple, Union
 import streamlit as st
 
-# ---------- 常數與檔案 ----------
-DATA_FILE = "aov_heroes.json"
-IMAGES_DIR = "hero_images"
+# ========== 位置與常數 ==========
+BASE_DIR = os.path.abspath(os.path.dirname(__file__)) if "__file__" in globals() else os.path.abspath(os.getcwd())
+DATA_FILE = os.path.join(BASE_DIR, "aov_heroes.json")
+IMAGES_DIR = os.path.join(BASE_DIR, "hero_images")
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
 ROLE_CHOICES = ["坦克", "戰士", "刺客", "法師", "射手", "輔助"]
@@ -26,7 +32,7 @@ ALLOWED_IMAGE_TYPES = ["png","jpg","jpeg","webp"]
 def tier_rank(t:str)->int:
     return TIER_WEIGHT.get(t, len(TIER_ORDER))
 
-# ---------- I/O ----------
+# ========== I/O ==========
 def load_data()->Dict[str,Dict]:
     if not os.path.exists(DATA_FILE):
         return {}
@@ -37,11 +43,19 @@ def load_data()->Dict[str,Dict]:
     except Exception:
         return {}
 
-def save_data(data:Dict[str,Dict])->None:
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+def _atomic_write_text(path: str, text: str):
+    # 原子寫入避免中途中斷
+    dir_name = os.path.dirname(path) or "."
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=dir_name, delete=False) as tf:
+        tf.write(text)
+        tmp_name = tf.name
+    os.replace(tmp_name, path)
 
-# ---------- 全局 BAN（總 Ban） ----------
+def save_data(data:Dict[str,Dict])->None:
+    payload = json.dumps(data, ensure_ascii=False, indent=2)
+    _atomic_write_text(DATA_FILE, payload)
+
+# ========== 全局 BAN（總 Ban） ==========
 def get_global_bans(d: Dict[str, Dict]) -> List[str]:
     v = d.get("__ban_list__", [])
     return list(v) if isinstance(v, list) else []
@@ -49,7 +63,7 @@ def get_global_bans(d: Dict[str, Dict]) -> List[str]:
 def set_global_bans(d: Dict[str, Dict], bans: List[str]) -> None:
     d["__ban_list__"] = sorted(dedupe([b for b in bans if b]))
 
-# ---------- 各分路 BAN ----------
+# ========== 各分路 BAN ==========
 def get_lane_bans(d: Dict[str, Dict]) -> Dict[str, List[str]]:
     v = d.get("__lane_bans__", {})
     if not isinstance(v, dict):
@@ -67,7 +81,7 @@ def set_lane_bans(d: Dict[str, Dict], lane_bans: Dict[str, List[str]]) -> None:
         clean[lane] = sorted(dedupe([x for x in lst if x]))
     d["__lane_bans__"] = clean
 
-# ---------- 體系陣容（相容新版/舊版） ----------
+# ========== 體系陣容（相容新版/舊版） ==========
 CompMembers = List[str]
 CompData = Dict[str, Union[str, List[str]]]
 Compositions = Dict[str, Dict[str, Union[str, List[str]]]]
@@ -93,7 +107,7 @@ def get_compositions(d: Dict[str, Dict]) -> Compositions:
         return {}
     out: Compositions = {}
     for name, entry in raw.items():
-        if not name: 
+        if not name:
             continue
         out[name] = _normalize_comp_entry(entry)
     return out
@@ -107,7 +121,7 @@ def set_compositions(d: Dict[str, Dict], comps: Compositions) -> None:
         clean[name] = norm
     d["__compositions__"] = clean
 
-# ---------- 小工具 ----------
+# ========== 小工具 ==========
 def dedupe(xs:List[str])->List[str]:
     seen, out = set(), []
     for x in xs:
@@ -145,13 +159,13 @@ def ensure_fields(h: Dict) -> Dict:
 def ensure_bidirectional_relationships(data: Dict[str, Dict]) -> int:
     changes = 0
     for k,v in list(data.items()):
-        if k.startswith("__"):  # 略過全局鍵
+        if k.startswith("__"):
             continue
         data[k] = ensure_fields(v)
     names = {n for n in data.keys() if not n.startswith("__")}
 
     for name, h in list(data.items()):
-        if name.startswith("__"):  # 跳過全局鍵
+        if name.startswith("__"):
             continue
         for key in ["counters","countered_by","ban_targets","synergy"]:
             before = len(h.get(key, []))
@@ -192,7 +206,7 @@ def save_uploaded_image(hero_name: str, uploaded_file) -> str:
 
 def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
     h = data.get(name) or {}
-    # 1) 先嘗試用 JSON 內的欄位
+    # 1) JSON 欄位
     p = h.get("image", "")
     if p:
         candidate = p
@@ -200,7 +214,7 @@ def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
             candidate = os.path.join(IMAGES_DIR, os.path.basename(candidate))
         if os.path.exists(candidate):
             return candidate
-    # 2) safe_slug(英雄名)
+    # 2) safe_slug
     base = safe_slug(name)
     for ext in ALLOWED_IMAGE_TYPES:
         candidate = os.path.join(IMAGES_DIR, f"{base}.{ext}")
@@ -213,7 +227,7 @@ def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
             return candidate
     return ""
 
-# ---------- 縮圖網格（純展示；全域外觀設定） ----------
+# ========== UI 共用 ==========
 def render_image_grid(names: List[str], data: Dict[str, Dict], size:int, cols:int, show_names:bool):
     for i in range(0, len(names), cols):
         row = st.columns(cols)
@@ -243,7 +257,7 @@ def lane_tier_lines(h: Dict) -> List[str]:
             lines.append(f"{lane}：{lt}")
     return lines
 
-# ---------- 快速編輯面板（修正變數與縮排） ----------
+# ========== 快速編輯面板 ==========
 def quick_edit_panel(name: str):
     data = st.session_state.data
     if name not in data:
@@ -252,13 +266,11 @@ def quick_edit_panel(name: str):
     st.markdown("### ✏️ 快速編輯：" + name)
     cols = st.columns(2)
 
-    # 左側：圖片預覽（使用 name，不再誤用 picked）
     with cols[0]:
         p_main = get_hero_image_path(data, name)
         if p_main:
             st.image(p_main, caption=name, use_container_width=False)
 
-    # 右側：表單
     with cols[1]:
         tier = st.selectbox("T 度（可留白）", TIER_CHOICES,
                             index=TIER_CHOICES.index(h.get("tier", "")),
@@ -288,7 +300,6 @@ def quick_edit_panel(name: str):
         counters = st.text_input("克制（逗號或空白分隔）",
                                  " ".join(h["counters"]),
                                  key=f"qe_counters_{name}")
-        # 保留舊值顯示；保存時從 session 取
         st.text_input("被克制（逗號或空白分隔）",
                       " ".join(h["countered_by"]),
                       key=f"qe_countered_by_{name}")
@@ -313,7 +324,7 @@ def quick_edit_panel(name: str):
                 }
                 if img_file is not None:
                     path = save_uploaded_image(name, img_file)
-                    if path: 
+                    if path:
                         data[name]["image"] = path
                 c = ensure_bidirectional_relationships(data)
                 save_data(data)
@@ -323,14 +334,14 @@ def quick_edit_panel(name: str):
                 st.session_state.quick_edit_name = ""
                 st.experimental_rerun()
 
-# ---------- UI ----------
+# ========== 頁面設定 ==========
 st.set_page_config(page_title="AOV戰略助手", page_icon="🛡️", layout="wide")
 st.title("🛡️ AOV戰略助手")
 
 # 側邊欄：極簡外觀設定
 with st.sidebar:
     st.markdown("### 介面設定")
-    minimal = st.checkbox("極簡模式", value=True, help="自動使用較小縮圖與較多欄位，畫面更緊湊")
+    minimal = st.checkbox("極簡模式", value=True, help="較小縮圖、較多欄位，畫面更緊湊")
     if minimal:
         default_thumb = 64
         default_cols  = 10
@@ -359,11 +370,11 @@ if st.session_state.quick_edit_name:
     quick_edit_panel(st.session_state.quick_edit_name)
     st.divider()
 
-# Toolbar
+# 工具列
 colA, colB, colC, colD = st.columns([1,1,1,2])
 with colA:
     if st.button("💾 保存到 aov_heroes.json"):
-        save_data(data); st.success("已保存")
+        save_data(data); st.success(f"已保存到：{DATA_FILE}")
 with colB:
     if st.button("🧩 修正雙向關係"):
         c = ensure_bidirectional_relationships(data); save_data(data)
@@ -374,7 +385,8 @@ with colC:
         try:
             st.session_state.data = json.load(uploaded)
             data = st.session_state.data
-            st.success("匯入成功！")
+            save_data(data)
+            st.success("匯入成功並已保存！")
         except Exception as e:
             st.error(f"匯入失敗：{e}")
 with colD:
@@ -394,7 +406,7 @@ st.divider()
     "⚔️ Tier 排行"
 ])
 
-# --------- 查詢/編輯 ---------
+# --------- 查詢 / 編輯 ---------
 with tab1:
     left, right = st.columns([1,1])
     with left:
@@ -413,7 +425,6 @@ with tab1:
                               index=default_index,
                               key="picked_name")
 
-        # 安全縮排：只有選到英雄時才會使用 p_main / h
         if picked != "（請選擇）" and picked in data:
             h = ensure_fields(data[picked])
             st.subheader(f"📄 {picked}")
@@ -611,7 +622,7 @@ with tab2:
         c = ensure_bidirectional_relationships(data); save_data(data)
         st.success(f"已新增『{name}』，修補 {c} 項")
 
-# --------- 體系陣容（輸入操作收合；純展示縮圖） ---------
+# --------- 體系陣容（操作收合；純展示縮圖） ---------
 with tabComp:
     st.subheader("🏹 體系陣容")
     comps = get_compositions(data)
@@ -696,7 +707,7 @@ with tabComp:
 
             st.divider()
 
-# --------- Ban Pick（僅輸入名字；純展示縮圖） ---------
+# --------- Ban Pick（名字輸入；純展示縮圖） ---------
 with tabBan:
     st.subheader("🛑 Ban Pick")
     mode = st.radio("顯示模式", ["總 Ban", "各分路 Ban"], horizontal=True, key="ban_mode")
@@ -752,7 +763,7 @@ with tabBan:
                 set_lane_bans(data, lane_bans); save_data(data)
                 st.success("已更新！")
 
-# --------- 英雄庫（職業/路線/T度；純展示縮圖） ---------
+# --------- 英雄庫（篩選；純展示縮圖） ---------
 with tabLib:
     st.subheader("🖼️ 英雄庫")
     colf1, colf2, colf3 = st.columns(3)
@@ -769,7 +780,7 @@ with tabLib:
 
     items: List[Tuple[str, Dict]] = []
     for name in sorted(data.keys()):
-        if name.startswith("__"): 
+        if name.startswith("__"):
             continue
         h = ensure_fields(data[name])
         if lane_filter != "全部" and lane_filter not in h["lanes"]:
@@ -793,7 +804,7 @@ with tabTier:
 
     lists = {"T0":[],"T1":[],"T2":[],"T3":[],"特殊":[]}
     for n, h in sorted(data.items()):
-        if n.startswith("__"): 
+        if n.startswith("__"):
             continue
         t = ensure_fields(h)["lane_tiers"].get(target_lane, "")
         if t in lists:
