@@ -1,20 +1,15 @@
 # app.py
-# AOV戰略助手（含 Google Sheets 同步／一鍵測試／自動載入）
-# 功能：查詢/新增/更新/刪除/雙向修補/Ban Pick/英雄庫/Tier 排行/體系陣容
-# 特色：
-# 1) 側邊欄「檢查 Secrets」「測試 Google Sheets 連線」
-# 2) 可「保存到 Google Sheet」「從 Google Sheet 載入」
-# 3) 勾選「自動同步到 Sheet」→ 每次本地保存（含體系操作）會自動同步
-# 4) 重新開機（reboot）時：若勾「啟動時優先從 Sheet 載入」，會先讀雲端資料
+# AOV戰略助手（極簡模式＋側邊欄外觀設定＋體系操作區收合）
+# 功能：查詢/新增/更新/刪除/雙向修補/Ban Pick（總Ban/各分路Ban｜僅輸入名字）/英雄庫/Tier 排行/體系陣容（含核心與被克制｜僅輸入名字）
+# 極簡強化：
+# - 側邊欄可切換「極簡模式」：自動使用較小縮圖與較多欄位、更緊湊
+# - 側邊欄可調整縮圖大小與每列數量、是否顯示名稱（全域套用）
+# - 體系陣容：所有輸入操作區改為收合面板（預設收合），畫面更乾淨
+# - 全站縮圖「純展示」——無任何點擊/按鈕
 
-import json, os, re, time
+import json, os, re
 from typing import Dict, List, Tuple, Union
 import streamlit as st
-
-# ---- 這兩個外部套件用於 Google Sheets 連線 ----
-# pip 安裝：gspread、google-auth
-import gspread
-from google.oauth2.service_account import Credentials
 
 # ---------- 常數與檔案 ----------
 DATA_FILE = "aov_heroes.json"
@@ -197,6 +192,7 @@ def save_uploaded_image(hero_name: str, uploaded_file) -> str:
 
 def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
     h = data.get(name) or {}
+    # 1) 先嘗試用 JSON 內的欄位
     p = h.get("image", "")
     if p:
         candidate = p
@@ -204,100 +200,18 @@ def get_hero_image_path(data: Dict[str, Dict], name: str) -> str:
             candidate = os.path.join(IMAGES_DIR, os.path.basename(candidate))
         if os.path.exists(candidate):
             return candidate
+    # 2) safe_slug(英雄名)
     base = safe_slug(name)
     for ext in ALLOWED_IMAGE_TYPES:
         candidate = os.path.join(IMAGES_DIR, f"{base}.{ext}")
         if os.path.exists(candidate):
             return candidate
+    # 3) 原始英雄名
     for ext in ALLOWED_IMAGE_TYPES:
         candidate = os.path.join(IMAGES_DIR, f"{name}.{ext}")
         if os.path.exists(candidate):
             return candidate
     return ""
-
-# ---------- Google Sheets 連線 ----------
-def _secrets_ok() -> Tuple[bool, str]:
-    try:
-        root_keys = list(st.secrets.keys())
-    except Exception as e:
-        return False, f"讀 st.secrets 失敗：{e}"
-    for must in ("gcp_service_account", "GSHEET_ID", "GSHEET_TAB"):
-        if must not in st.secrets:
-            return False, f"st.secrets 沒有 {must}。"
-    return True, "OK"
-
-def _gsheet_init():
-    ok, msg = _secrets_ok()
-    if not ok: raise KeyError(msg)
-    info = dict(st.secrets["gcp_service_account"])
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive"
-    ]
-    creds = Credentials.from_service_account_info(info, scopes=scopes)
-    client = gspread.authorize(creds)
-    sh = client.open_by_key(st.secrets["GSHEET_ID"])
-    tab = st.secrets["GSHEET_TAB"]
-    try:
-        ws = sh.worksheet(tab)
-    except gspread.exceptions.WorksheetNotFound:
-        ws = sh.add_worksheet(title=tab, rows=1000, cols=20)
-        # 初始化表頭
-        ws.update("A1:D1", [["composition", "core", "members", "counters"]])
-    return ws
-
-def gsheet_push_compositions(data: Dict[str, Dict]) -> int:
-    """把 __compositions__ 寫到 Google Sheet (清掉舊資料後重寫)。回傳寫入列數。"""
-    ws = _gsheet_init()
-    comps = get_compositions(data)
-    rows = [["composition", "core", "members", "counters"]]
-    for cname, entry in sorted(comps.items()):
-        members = " ".join(entry.get("members", []) or [])
-        core = entry.get("core", "") or ""
-        counters = " ".join(entry.get("counters", []) or [])
-        rows.append([cname, core, members, counters])
-
-    # 清空舊資料（保留表頭）
-    ws.resize(rows=1)
-    if len(rows) > 1:
-        ws.update(f"A1:D{len(rows)}", rows)
-    else:
-        ws.update("A1:D1", rows)
-
-    return len(rows) - 1
-
-def gsheet_pull_compositions(data: Dict[str, Dict]) -> int:
-    """從 Google Sheet 讀取 compositions 覆蓋回 data。回傳讀到的體系數。"""
-    ws = _gsheet_init()
-    vals = ws.get_all_values()
-    if not vals:
-        set_compositions(data, {})
-        return 0
-    header = [h.strip().lower() for h in vals[0]]
-    try:
-        c_idx = header.index("composition")
-        core_idx = header.index("core")
-        members_idx = header.index("members")
-        counters_idx = header.index("counters")
-    except ValueError:
-        # 表頭不完整
-        set_compositions(data, {})
-        return 0
-
-    comps: Compositions = {}
-    for row in vals[1:]:
-        if not row or all(not c.strip() for c in row):
-            continue
-        cname = (row[c_idx] if c_idx < len(row) else "").strip()
-        if not cname:
-            continue
-        core = (row[core_idx] if core_idx < len(row) else "").strip()
-        members = norm_list(row[members_idx] if members_idx < len(row) else "")
-        counters = norm_list(row[counters_idx] if counters_idx < len(row) else "")
-        comps[cname] = {"members": members, "core": core, "counters": counters}
-
-    set_compositions(data, comps)
-    return len(comps)
 
 # ---------- 縮圖網格（純展示；全域外觀設定） ----------
 def render_image_grid(names: List[str], data: Dict[str, Dict], size:int, cols:int, show_names:bool):
@@ -329,7 +243,7 @@ def lane_tier_lines(h: Dict) -> List[str]:
             lines.append(f"{lane}：{lt}")
     return lines
 
-# ---------- 快速編輯面板 ----------
+# ---------- 快速編輯面板（修正變數與縮排） ----------
 def quick_edit_panel(name: str):
     data = st.session_state.data
     if name not in data:
@@ -338,11 +252,13 @@ def quick_edit_panel(name: str):
     st.markdown("### ✏️ 快速編輯：" + name)
     cols = st.columns(2)
 
+    # 左側：圖片預覽（使用 name，不再誤用 picked）
     with cols[0]:
         p_main = get_hero_image_path(data, name)
         if p_main:
             st.image(p_main, caption=name, use_container_width=False)
 
+    # 右側：表單
     with cols[1]:
         tier = st.selectbox("T 度（可留白）", TIER_CHOICES,
                             index=TIER_CHOICES.index(h.get("tier", "")),
@@ -372,6 +288,7 @@ def quick_edit_panel(name: str):
         counters = st.text_input("克制（逗號或空白分隔）",
                                  " ".join(h["counters"]),
                                  key=f"qe_counters_{name}")
+        # 保留舊值顯示；保存時從 session 取
         st.text_input("被克制（逗號或空白分隔）",
                       " ".join(h["countered_by"]),
                       key=f"qe_countered_by_{name}")
@@ -401,7 +318,6 @@ def quick_edit_panel(name: str):
                 c = ensure_bidirectional_relationships(data)
                 save_data(data)
                 st.success(f"已保存『{name}』，修補 {c} 項")
-                _maybe_auto_sync()
         with b2:
             if st.button("❌ 關閉快速編輯", key=f"qe_close_{name}"):
                 st.session_state.quick_edit_name = ""
@@ -411,50 +327,22 @@ def quick_edit_panel(name: str):
 st.set_page_config(page_title="AOV戰略助手", page_icon="🛡️", layout="wide")
 st.title("🛡️ AOV戰略助手")
 
-# 側邊欄：雲端同步與除錯
+# 側邊欄：極簡外觀設定
 with st.sidebar:
-    st.markdown("### ☁️ 雲端同步（Google Sheets）")
-    auto_sync = st.checkbox("自動同步到 Sheet", value=True, help="每次保存本地資料時，自動覆蓋到 Google Sheet")
-    startup_pull = st.checkbox("啟動時優先從 Sheet 載入", value=True, help="重啟後先讀雲端的 __compositions__ 回本地")
-    st.session_state.setdefault("auto_sync", auto_sync)
-    st.session_state["auto_sync"] = auto_sync
-    st.session_state.setdefault("startup_pull", startup_pull)
-    st.session_state["startup_pull"] = startup_pull
+    st.markdown("### 介面設定")
+    minimal = st.checkbox("極簡模式", value=True, help="自動使用較小縮圖與較多欄位，畫面更緊湊")
+    if minimal:
+        default_thumb = 64
+        default_cols  = 10
+        default_show_names = False
+    else:
+        default_thumb = 72
+        default_cols  = 8
+        default_show_names = True
 
-    col_a, col_b = st.columns(2)
-    with col_a:
-        if st.button("🔍 檢查 Secrets"):
-            _ok, _msg = _secrets_ok()
-            if _ok:
-                st.success("Secrets OK（含 gcp_service_account、GSHEET_ID、GSHEET_TAB）")
-            else:
-                st.error(_msg)
-    with col_b:
-        if st.button("🧪 測試 Google Sheets 連線"):
-            try:
-                ws = _gsheet_init()
-                st.success(f"✅ 連線成功，使用工作表：{ws.title}")
-            except Exception as e:
-                st.error(f"❌ 連線失敗：{e}")
-
-    st.divider()
-    st.markdown("### 快速操作")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("⬆️ 保存到 Google Sheet"):
-            try:
-                n = gsheet_push_compositions(st.session_state.data)
-                st.success(f"已寫入 {n} 個體系到 Sheet")
-            except Exception as e:
-                st.error(f"寫入失敗：{e}")
-    with col2:
-        if st.button("⬇️ 從 Google Sheet 載入"):
-            try:
-                n = gsheet_pull_compositions(st.session_state.data)
-                save_data(st.session_state.data)
-                st.success(f"已從 Sheet 載入 {n} 個體系並保存到本地")
-            except Exception as e:
-                st.error(f"讀取失敗：{e}")
+    thumb_size = st.slider("縮圖大小", 48, 112, default_thumb, step=4)
+    grid_cols  = st.slider("每列數量", 4, 14, default_cols, step=1)
+    show_names = st.checkbox("顯示名稱", value=default_show_names)
 
 # 狀態
 if "data" not in st.session_state:
@@ -466,36 +354,27 @@ if "quick_edit_name" not in st.session_state:
 
 data: Dict[str, Dict] = st.session_state.data
 
-# 啟動時：若勾選，先從 Sheet 拉體系
-if st.session_state.get("startup_pull", False):
-    try:
-        n = gsheet_pull_compositions(data)
-        if n:
-            save_data(data)
-            st.info(f"（啟動自動）已從 Sheet 載入 {n} 個體系")
-    except Exception as e:
-        st.warning(f"啟動自動載入失敗：{e}")
+# 若指定了 quick_edit_name，先顯示快速編輯
+if st.session_state.quick_edit_name:
+    quick_edit_panel(st.session_state.quick_edit_name)
+    st.divider()
 
 # Toolbar
 colA, colB, colC, colD = st.columns([1,1,1,2])
 with colA:
     if st.button("💾 保存到 aov_heroes.json"):
         save_data(data); st.success("已保存")
-        _maybe_auto_sync()
 with colB:
     if st.button("🧩 修正雙向關係"):
         c = ensure_bidirectional_relationships(data); save_data(data)
         st.success(f"已修正 {c} 項")
-        _maybe_auto_sync()
 with colC:
     uploaded = st.file_uploader("⬆️ 匯入 JSON（覆蓋現有資料）", type=["json"], label_visibility="collapsed", key="import_json")
     if uploaded:
         try:
             st.session_state.data = json.load(uploaded)
             data = st.session_state.data
-            save_data(data)
             st.success("匯入成功！")
-            _maybe_auto_sync()
         except Exception as e:
             st.error(f"匯入失敗：{e}")
 with colD:
@@ -534,6 +413,7 @@ with tab1:
                               index=default_index,
                               key="picked_name")
 
+        # 安全縮排：只有選到英雄時才會使用 p_main / h
         if picked != "（請選擇）" and picked in data:
             h = ensure_fields(data[picked])
             st.subheader(f"📄 {picked}")
@@ -556,13 +436,13 @@ with tab1:
 
             st.markdown("**克制（counters）**")
             if h["counters"]:
-                render_image_grid(h["counters"], data, size=72, cols=10, show_names=False)
+                render_image_grid(h["counters"], data, size=thumb_size, cols=min(grid_cols, 10), show_names=show_names)
             else:
                 st.caption("—")
 
             st.markdown("**被克制（countered_by）**")
             if h["countered_by"]:
-                render_image_grid(h["countered_by"], data, size=72, cols=10, show_names=False)
+                render_image_grid(h["countered_by"], data, size=thumb_size, cols=min(grid_cols, 10), show_names=show_names)
             else:
                 st.caption("—")
 
@@ -639,7 +519,6 @@ with tab1:
                             data[picked]["image"] = path
                     c = ensure_bidirectional_relationships(data); save_data(data)
                     st.success(f"已更新『{picked}』，修補 {c} 項")
-                    _maybe_auto_sync()
             with coly:
                 if st.button("🗑️ 刪除該英雄", key=f"btn_delete_{picked}"):
                     if h.get("image") and os.path.exists(h["image"]):
@@ -650,6 +529,7 @@ with tab1:
                         if isinstance(hh, dict) and "counters" in hh:
                             for key in ["counters","countered_by","ban_targets","synergy"]:
                                 hh[key] = [x for x in hh[key] if x != picked]
+                    # 從體系移除/清理
                     comps = get_compositions(data)
                     changed = False
                     for cname in list(comps.keys()):
@@ -668,7 +548,6 @@ with tab1:
                         set_compositions(data, comps)
                     c = ensure_bidirectional_relationships(data); save_data(data)
                     st.success(f"已刪除『{picked}』，並修補 {c} 項")
-                    _maybe_auto_sync()
             with colz:
                 if st.button("🖼️ 只更新圖片", key=f"btn_img_only_{picked}"):
                     if img_file is None:
@@ -679,7 +558,6 @@ with tab1:
                             data[picked]["image"] = path
                             save_data(data)
                             st.success("圖片已更新！")
-                            _maybe_auto_sync()
                 st.download_button("⬇️ 下載目前資料(JSON)",
                                    data=json.dumps(data, ensure_ascii=False, indent=2),
                                    file_name="aov_heroes.json",
@@ -732,11 +610,10 @@ with tab2:
         }
         c = ensure_bidirectional_relationships(data); save_data(data)
         st.success(f"已新增『{name}』，修補 {c} 項")
-        _maybe_auto_sync()
 
-# --------- 體系陣容 ---------
+# --------- 體系陣容（輸入操作收合；純展示縮圖） ---------
 with tabComp:
-    st.subheader("🏹 體系陣容（__compositions__）")
+    st.subheader("🏹 體系陣容")
     comps = get_compositions(data)
 
     with st.expander("➕ 新增體系", expanded=False):
@@ -750,7 +627,6 @@ with tabComp:
                 comps[new_comp] = {"members": [], "core": "", "counters": []}
                 set_compositions(data, comps); save_data(data)
                 st.success(f"已建立體系：{new_comp}")
-                _maybe_auto_sync()
 
     st.divider()
 
@@ -766,19 +642,19 @@ with tabComp:
 
             st.markdown("**核心英雄（Core）**")
             if core:
-                render_image_grid([core], data, size=64, cols=1, show_names=False)
+                render_image_grid([core], data, size=thumb_size, cols=1, show_names=show_names)
             else:
                 st.caption("（未設定）")
 
             st.markdown("**成員（Members）**")
             if members:
-                render_image_grid(members, data, size=64, cols=12, show_names=False)
+                render_image_grid(members, data, size=thumb_size, cols=grid_cols, show_names=show_names)
             else:
                 st.caption("（尚無成員）")
 
             st.markdown("**被克制（這個體系怕誰）**")
             if ctrs:
-                render_image_grid(ctrs, data, size=64, cols=12, show_names=False)
+                render_image_grid(ctrs, data, size=thumb_size, cols=grid_cols, show_names=show_names)
             else:
                 st.caption("（尚未指定）")
 
@@ -791,14 +667,12 @@ with tabComp:
                         comps[cname]["members"] = new_members
                         set_compositions(data, comps); save_data(data)
                         st.success("已加入！")
-                        _maybe_auto_sync()
                     rm_free = st.text_input("移除成員（逗號/空白分隔）", key=f"comp_rm_free_{cname}")
                     if st.button("移除成員", key=f"comp_btn_rm_{cname}"):
                         rm_list = set(norm_list(rm_free))
                         comps[cname]["members"] = [x for x in members if x not in rm_list]
                         set_compositions(data, comps); save_data(data)
                         st.success("已移除！")
-                        _maybe_auto_sync()
 
                 with col2:
                     core_free = st.text_input("核心英雄（輸入名字）", value=core, key=f"comp_core_free_{cname}")
@@ -806,7 +680,6 @@ with tabComp:
                         comps[cname]["core"] = core_free.strip()
                         set_compositions(data, comps); save_data(data)
                         st.success("核心已更新！")
-                        _maybe_auto_sync()
 
                 with col3:
                     ctr_free = st.text_input("被哪些英雄克制（逗號/空白分隔）", value=" ".join(ctrs), key=f"comp_ctr_free_{cname}")
@@ -814,18 +687,16 @@ with tabComp:
                         comps[cname]["counters"] = sorted(dedupe(norm_list(ctr_free)))
                         set_compositions(data, comps); save_data(data)
                         st.success("被克制清單已更新！")
-                        _maybe_auto_sync()
 
                 st.markdown("---")
                 if st.button("🗑️ 刪除這個體系", key=f"comp_btn_del_{cname}"):
                     comps.pop(cname, None)
                     set_compositions(data, comps); save_data(data)
                     st.success("已刪除體系")
-                    _maybe_auto_sync()
 
             st.divider()
 
-# --------- Ban Pick ---------
+# --------- Ban Pick（僅輸入名字；純展示縮圖） ---------
 with tabBan:
     st.subheader("🛑 Ban Pick")
     mode = st.radio("顯示模式", ["總 Ban", "各分路 Ban"], horizontal=True, key="ban_mode")
@@ -836,7 +707,7 @@ with tabBan:
         if not current_bans:
             st.info("目前沒有任何 Ban。你可以在下方新增。")
         else:
-            render_image_grid(current_bans, data, size=64, cols=12, show_names=False)
+            render_image_grid(current_bans, data, size=thumb_size, cols=grid_cols, show_names=show_names)
 
         with st.expander("➕ 新增或移除（總 Ban）", expanded=False):
             st.markdown("**新增**")
@@ -845,7 +716,6 @@ with tabBan:
                 new_list = current_bans + norm_list(extra)
                 set_global_bans(data, new_list); save_data(data)
                 st.success("已加入 Ban！")
-                _maybe_auto_sync()
 
             st.markdown("**移除**")
             remove_text = st.text_input("輸入要移除的名字（逗號/空白分隔）", key="ban_remove_text")
@@ -854,7 +724,6 @@ with tabBan:
                 remain = [b for b in current_bans if b not in to_remove]
                 set_global_bans(data, remain); save_data(data)
                 st.success("已更新 Ban！")
-                _maybe_auto_sync()
 
     else:
         st.markdown("### Ban")
@@ -865,7 +734,7 @@ with tabBan:
         if not lst:
             st.info(f"「{lane_sel}」目前沒有 Ban。下方可新增。")
         else:
-            render_image_grid(lst, data, size=64, cols=12, show_names=False)
+            render_image_grid(lst, data, size=thumb_size, cols=grid_cols, show_names=show_names)
 
         with st.expander(f"➕ 新增或移除（{lane_sel}）", expanded=False):
             st.markdown("**新增**")
@@ -874,7 +743,6 @@ with tabBan:
                 lane_bans[lane_sel] = sorted(dedupe(lst + norm_list(extra)))
                 set_lane_bans(data, lane_bans); save_data(data)
                 st.success(f"已加入 {lane_sel} 的 Ban！")
-                _maybe_auto_sync()
 
             st.markdown("**移除**")
             rm_text = st.text_input("輸入要移除的名字（逗號/空白分隔）", key=f"lane_ban_remove_txt_{lane_sel}")
@@ -883,9 +751,8 @@ with tabBan:
                 lane_bans[lane_sel] = [b for b in lst if b not in to_remove]
                 set_lane_bans(data, lane_bans); save_data(data)
                 st.success("已更新！")
-                _maybe_auto_sync()
 
-# --------- 英雄庫 ---------
+# --------- 英雄庫（職業/路線/T度；純展示縮圖） ---------
 with tabLib:
     st.subheader("🖼️ 英雄庫")
     colf1, colf2, colf3 = st.columns(3)
@@ -917,9 +784,9 @@ with tabLib:
     if not items:
         st.info("沒有符合條件的英雄。請調整篩選器。")
     else:
-        render_image_grid([nm for nm,_ in items], data, size=64, cols=12, show_names=False)
+        render_image_grid([nm for nm,_ in items], data, size=thumb_size, cols=grid_cols, show_names=show_names)
 
-# --------- Tier 排行 ---------
+# --------- Tier 排行（唯讀；純展示縮圖） ---------
 with tabTier:
     st.subheader("⚔️ 英雄 Tier 排行")
     target_lane = st.selectbox("選擇路線", LANE_CHOICES, index=2, key="tier_lane_view")
@@ -938,15 +805,5 @@ with tabTier:
         if not lst:
             st.caption("（目前空白）")
         else:
-            render_image_grid(lst, data, size=64, cols=12, show_names=False)
+            render_image_grid(lst, data, size=thumb_size, cols=grid_cols, show_names=show_names)
         st.divider()
-
-
-# ---------- 共用：自動同步 ----------
-def _maybe_auto_sync():
-    if st.session_state.get("auto_sync", False):
-        try:
-            n = gsheet_push_compositions(st.session_state.data)
-            st.info(f"（自動）已同步 {n} 個體系到 Google Sheet")
-        except Exception as e:
-            st.warning(f"（自動同步失敗）{e}")
